@@ -1,0 +1,63 @@
+# Geliştirme dosyaları
+.git
+.github
+.vscode
+.idea
+.DS_Store
+.editorconfig
+.eslintrc
+.eslintignore
+.prettierrc
+.prettierignore
+.travis.yml
+.gitlab-ci.yml
+.circleci
+.github
+.husky
+
+# Test dosyaları
+test
+tests
+__tests__
+coverage
+.nyc_output
+jest.config.js
+mocha.opts
+*.spec.js
+*.test.js
+
+# Dökümantasyon
+docs
+examples
+demo
+tutorials
+wiki
+CHANGELOG.md
+ROADMAP.md
+CONTRIBUTING.md
+
+# Kaynak dosyaları
+src/examples
+src/demo
+src/test
+src/tests
+src/__tests__
+
+# Geliştirme araçları
+webpack.config.js
+rollup.config.js
+babel.config.js
+tsconfig.json
+tslint.json
+gulpfile.js
+Gruntfile.js
+
+# Diğer
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+*.log
+*.tgz
+.env
+.env.*

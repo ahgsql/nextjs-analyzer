@@ -1,3 +1,52 @@
-node_modules/
-*.log
+# Bağımlılıklar
+/node_modules
+/.pnp
+.pnp.js
+
+# Test
+/coverage
+/.nyc_output
+
+# Üretim
+/build
+/dist
+
+# Çeşitli
 .DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Loglar
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# IDE ve editörler
+/.idea
+/.vscode
+*.swp
+*.swo
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Paketleme
+*.tgz
+*.tar.gz
+*.zip
+
+# Çıktı dosyaları
+nextjs-analysis.html
+nextjs-analysis.json
+nextjs-analysis.txt
+
+# Geçici dosyalar
+.tmp
+.temp
