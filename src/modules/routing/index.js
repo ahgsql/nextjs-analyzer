@@ -1,13 +1,13 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { findFiles, getRelativePath } = require('../../utils');
+const { findFiles, getRelativePath, i18n } = require('../../utils');
 
 /**
  * Route Analizi Modülü
  */
 module.exports = {
-  name: 'routing',
-  description: 'Next.js projelerinde route analizi yapar',
+  name: i18n.t('modules.routing.name'),
+  description: i18n.t('modules.routing.description'),
   
   /**
    * Analiz işlemini gerçekleştirir
@@ -164,27 +164,27 @@ module.exports = {
      * @returns {string} - Metin formatında görselleştirme
      */
     text(results) {
-      let output = '# Route Analizi\n\n';
+      let output = `# ${i18n.t('modules.routing.visualize.title')}\n\n`;
       
       if (results.results.routes.length === 0) {
-        output += 'Hiç route bulunamadı.\n';
+        output += `${i18n.t('modules.routing.visualize.noRoutes')}\n`;
         return output;
       }
       
       // App Router route'ları
       const appRoutes = results.results.routes.filter(route => route.routerType === 'app');
       if (appRoutes.length > 0) {
-        output += '## App Router\n\n';
+        output += `## ${i18n.t('modules.routing.visualize.appRouter')}\n\n`;
         
         // Sayfa route'ları
         const appPageRoutes = appRoutes.filter(route => route.type === 'page');
         if (appPageRoutes.length > 0) {
-          output += '### Sayfalar\n\n';
+          output += `### ${i18n.t('modules.routing.visualize.pages')}\n\n`;
           
           // Statik route'lar
           const staticAppPageRoutes = appPageRoutes.filter(route => !route.isDynamic);
           if (staticAppPageRoutes.length > 0) {
-            output += '#### Statik Sayfalar\n\n';
+            output += `#### ${i18n.t('modules.routing.visualize.staticPages')}\n\n`;
             staticAppPageRoutes.forEach(route => {
               output += `- ${route.path} (${route.filePath})\n`;
             });
@@ -194,9 +194,9 @@ module.exports = {
           // Dinamik route'lar
           const dynamicAppPageRoutes = appPageRoutes.filter(route => route.isDynamic);
           if (dynamicAppPageRoutes.length > 0) {
-            output += '#### Dinamik Sayfalar\n\n';
+            output += `#### ${i18n.t('modules.routing.visualize.dynamicPages')}\n\n`;
             dynamicAppPageRoutes.forEach(route => {
-              output += `- ${route.path} (${route.filePath}) - Parametreler: ${route.params.join(', ')}\n`;
+              output += `- ${route.path} (${route.filePath}) - ${i18n.t('modules.routing.visualize.parameters')}: ${route.params.join(', ')}\n`;
             });
             output += '\n';
           }
@@ -205,12 +205,12 @@ module.exports = {
         // API route'ları
         const appApiRoutes = appRoutes.filter(route => route.type === 'api');
         if (appApiRoutes.length > 0) {
-          output += '### API Route\'lar\n\n';
+          output += `### ${i18n.t('modules.routing.visualize.apiRoutes')}\n\n`;
           
           // Statik API route'lar
           const staticAppApiRoutes = appApiRoutes.filter(route => !route.isDynamic);
           if (staticAppApiRoutes.length > 0) {
-            output += '#### Statik API Route\'lar\n\n';
+            output += `#### ${i18n.t('modules.routing.visualize.staticApiRoutes')}\n\n`;
             staticAppApiRoutes.forEach(route => {
               output += `- ${route.path} (${route.filePath})\n`;
             });
@@ -220,9 +220,9 @@ module.exports = {
           // Dinamik API route'lar
           const dynamicAppApiRoutes = appApiRoutes.filter(route => route.isDynamic);
           if (dynamicAppApiRoutes.length > 0) {
-            output += '#### Dinamik API Route\'lar\n\n';
+            output += `#### ${i18n.t('modules.routing.visualize.dynamicApiRoutes')}\n\n`;
             dynamicAppApiRoutes.forEach(route => {
-              output += `- ${route.path} (${route.filePath}) - Parametreler: ${route.params.join(', ')}\n`;
+              output += `- ${route.path} (${route.filePath}) - ${i18n.t('modules.routing.visualize.parameters')}: ${route.params.join(', ')}\n`;
             });
             output += '\n';
           }
@@ -232,17 +232,17 @@ module.exports = {
       // Pages Router route'ları
       const pagesRoutes = results.results.routes.filter(route => route.routerType === 'pages');
       if (pagesRoutes.length > 0) {
-        output += '## Pages Router\n\n';
+        output += `## ${i18n.t('modules.routing.visualize.pagesRouter')}\n\n`;
         
         // Sayfa route'ları
         const pagesPageRoutes = pagesRoutes.filter(route => route.type === 'page');
         if (pagesPageRoutes.length > 0) {
-          output += '### Sayfalar\n\n';
+          output += `### ${i18n.t('modules.routing.visualize.pages')}\n\n`;
           
           // Statik route'lar
           const staticPagesPageRoutes = pagesPageRoutes.filter(route => !route.isDynamic);
           if (staticPagesPageRoutes.length > 0) {
-            output += '#### Statik Sayfalar\n\n';
+            output += `#### ${i18n.t('modules.routing.visualize.staticPages')}\n\n`;
             staticPagesPageRoutes.forEach(route => {
               output += `- ${route.path} (${route.filePath})\n`;
             });
@@ -252,9 +252,9 @@ module.exports = {
           // Dinamik route'lar
           const dynamicPagesPageRoutes = pagesPageRoutes.filter(route => route.isDynamic);
           if (dynamicPagesPageRoutes.length > 0) {
-            output += '#### Dinamik Sayfalar\n\n';
+            output += `#### ${i18n.t('modules.routing.visualize.dynamicPages')}\n\n`;
             dynamicPagesPageRoutes.forEach(route => {
-              output += `- ${route.path} (${route.filePath}) - Parametreler: ${route.params.join(', ')}\n`;
+              output += `- ${route.path} (${route.filePath}) - ${i18n.t('modules.routing.visualize.parameters')}: ${route.params.join(', ')}\n`;
             });
             output += '\n';
           }
@@ -263,12 +263,12 @@ module.exports = {
         // API route'ları
         const pagesApiRoutes = pagesRoutes.filter(route => route.type === 'api');
         if (pagesApiRoutes.length > 0) {
-          output += '### API Route\'lar\n\n';
+          output += `### ${i18n.t('modules.routing.visualize.apiRoutes')}\n\n`;
           
           // Statik API route'lar
           const staticPagesApiRoutes = pagesApiRoutes.filter(route => !route.isDynamic);
           if (staticPagesApiRoutes.length > 0) {
-            output += '#### Statik API Route\'lar\n\n';
+            output += `#### ${i18n.t('modules.routing.visualize.staticApiRoutes')}\n\n`;
             staticPagesApiRoutes.forEach(route => {
               output += `- ${route.path} (${route.filePath})\n`;
             });
@@ -278,9 +278,9 @@ module.exports = {
           // Dinamik API route'lar
           const dynamicPagesApiRoutes = pagesApiRoutes.filter(route => route.isDynamic);
           if (dynamicPagesApiRoutes.length > 0) {
-            output += '#### Dinamik API Route\'lar\n\n';
+            output += `#### ${i18n.t('modules.routing.visualize.dynamicApiRoutes')}\n\n`;
             dynamicPagesApiRoutes.forEach(route => {
-              output += `- ${route.path} (${route.filePath}) - Parametreler: ${route.params.join(', ')}\n`;
+              output += `- ${route.path} (${route.filePath}) - ${i18n.t('modules.routing.visualize.parameters')}: ${route.params.join(', ')}\n`;
             });
             output += '\n';
           }
@@ -298,11 +298,11 @@ module.exports = {
     html(results) {
       let html = `
 <div class="routing-container">
-  <h2>Route Analizi</h2>`;
+  <h2>${i18n.t('modules.routing.visualize.title')}</h2>`;
       
       if (results.results.routes.length === 0) {
         html += `
-  <p>Hiç route bulunamadı.</p>
+  <p>${i18n.t('modules.routing.visualize.noRoutes')}</p>
 </div>`;
         return html;
       }
@@ -312,21 +312,21 @@ module.exports = {
       if (appRoutes.length > 0) {
         html += `
   <div class="router-section">
-    <h3>App Router</h3>`;
+    <h3>${i18n.t('modules.routing.visualize.appRouter')}</h3>`;
         
         // Sayfa route'ları
         const appPageRoutes = appRoutes.filter(route => route.type === 'page');
         if (appPageRoutes.length > 0) {
           html += `
     <div class="route-type-section">
-      <h4>Sayfalar</h4>`;
+      <h4>${i18n.t('modules.routing.visualize.pages')}</h4>`;
           
           // Statik route'lar
           const staticAppPageRoutes = appPageRoutes.filter(route => !route.isDynamic);
           if (staticAppPageRoutes.length > 0) {
             html += `
       <div class="route-category">
-        <h5>Statik Sayfalar</h5>
+        <h5>${i18n.t('modules.routing.visualize.staticPages')}</h5>
         <ul class="route-list">`;
             
             staticAppPageRoutes.forEach(route => {
@@ -347,7 +347,7 @@ module.exports = {
           if (dynamicAppPageRoutes.length > 0) {
             html += `
       <div class="route-category">
-        <h5>Dinamik Sayfalar</h5>
+        <h5>${i18n.t('modules.routing.visualize.dynamicPages')}</h5>
         <ul class="route-list">`;
             
             dynamicAppPageRoutes.forEach(route => {
@@ -355,7 +355,7 @@ module.exports = {
           <li class="route-item">
             <span class="route-path">${route.path}</span>
             <span class="route-file">(${route.filePath})</span>
-            <span class="route-params">Parametreler: ${route.params.join(', ')}</span>
+            <span class="route-params">${i18n.t('modules.routing.visualize.parameters')}: ${route.params.join(', ')}</span>
           </li>`;
             });
             
@@ -373,14 +373,14 @@ module.exports = {
         if (appApiRoutes.length > 0) {
           html += `
     <div class="route-type-section">
-      <h4>API Route'lar</h4>`;
+      <h4>${i18n.t('modules.routing.visualize.apiRoutes')}</h4>`;
           
           // Statik API route'lar
           const staticAppApiRoutes = appApiRoutes.filter(route => !route.isDynamic);
           if (staticAppApiRoutes.length > 0) {
             html += `
       <div class="route-category">
-        <h5>Statik API Route'lar</h5>
+        <h5>${i18n.t('modules.routing.visualize.staticApiRoutes')}</h5>
         <ul class="route-list">`;
             
             staticAppApiRoutes.forEach(route => {
@@ -401,7 +401,7 @@ module.exports = {
           if (dynamicAppApiRoutes.length > 0) {
             html += `
       <div class="route-category">
-        <h5>Dinamik API Route'lar</h5>
+        <h5>${i18n.t('modules.routing.visualize.dynamicApiRoutes')}</h5>
         <ul class="route-list">`;
             
             dynamicAppApiRoutes.forEach(route => {
@@ -409,7 +409,7 @@ module.exports = {
           <li class="route-item">
             <span class="route-path">${route.path}</span>
             <span class="route-file">(${route.filePath})</span>
-            <span class="route-params">Parametreler: ${route.params.join(', ')}</span>
+            <span class="route-params">${i18n.t('modules.routing.visualize.parameters')}: ${route.params.join(', ')}</span>
           </li>`;
             });
             
@@ -431,21 +431,21 @@ module.exports = {
       if (pagesRoutes.length > 0) {
         html += `
   <div class="router-section">
-    <h3>Pages Router</h3>`;
+    <h3>${i18n.t('modules.routing.visualize.pagesRouter')}</h3>`;
         
         // Sayfa route'ları
         const pagesPageRoutes = pagesRoutes.filter(route => route.type === 'page');
         if (pagesPageRoutes.length > 0) {
           html += `
     <div class="route-type-section">
-      <h4>Sayfalar</h4>`;
+      <h4>${i18n.t('modules.routing.visualize.pages')}</h4>`;
           
           // Statik route'lar
           const staticPagesPageRoutes = pagesPageRoutes.filter(route => !route.isDynamic);
           if (staticPagesPageRoutes.length > 0) {
             html += `
       <div class="route-category">
-        <h5>Statik Sayfalar</h5>
+        <h5>${i18n.t('modules.routing.visualize.staticPages')}</h5>
         <ul class="route-list">`;
             
             staticPagesPageRoutes.forEach(route => {
@@ -466,7 +466,7 @@ module.exports = {
           if (dynamicPagesPageRoutes.length > 0) {
             html += `
       <div class="route-category">
-        <h5>Dinamik Sayfalar</h5>
+        <h5>${i18n.t('modules.routing.visualize.dynamicPages')}</h5>
         <ul class="route-list">`;
             
             dynamicPagesPageRoutes.forEach(route => {
@@ -474,7 +474,7 @@ module.exports = {
           <li class="route-item">
             <span class="route-path">${route.path}</span>
             <span class="route-file">(${route.filePath})</span>
-            <span class="route-params">Parametreler: ${route.params.join(', ')}</span>
+            <span class="route-params">${i18n.t('modules.routing.visualize.parameters')}: ${route.params.join(', ')}</span>
           </li>`;
             });
             
@@ -492,14 +492,14 @@ module.exports = {
         if (pagesApiRoutes.length > 0) {
           html += `
     <div class="route-type-section">
-      <h4>API Route'lar</h4>`;
+      <h4>${i18n.t('modules.routing.visualize.apiRoutes')}</h4>`;
           
           // Statik API route'lar
           const staticPagesApiRoutes = pagesApiRoutes.filter(route => !route.isDynamic);
           if (staticPagesApiRoutes.length > 0) {
             html += `
       <div class="route-category">
-        <h5>Statik API Route'lar</h5>
+        <h5>${i18n.t('modules.routing.visualize.staticApiRoutes')}</h5>
         <ul class="route-list">`;
             
             staticPagesApiRoutes.forEach(route => {
@@ -520,7 +520,7 @@ module.exports = {
           if (dynamicPagesApiRoutes.length > 0) {
             html += `
       <div class="route-category">
-        <h5>Dinamik API Route'lar</h5>
+        <h5>${i18n.t('modules.routing.visualize.dynamicApiRoutes')}</h5>
         <ul class="route-list">`;
             
             dynamicPagesApiRoutes.forEach(route => {
@@ -528,7 +528,7 @@ module.exports = {
           <li class="route-item">
             <span class="route-path">${route.path}</span>
             <span class="route-file">(${route.filePath})</span>
-            <span class="route-params">Parametreler: ${route.params.join(', ')}</span>
+            <span class="route-params">${i18n.t('modules.routing.visualize.parameters')}: ${route.params.join(', ')}</span>
           </li>`;
             });
             

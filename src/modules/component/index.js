@@ -1,6 +1,6 @@
 const path = require('path');
 const chalk = require('chalk');
-const { getRelativePath, stripAnsi, replaceAsciiWithEmoji } = require('../../utils');
+const { getRelativePath, stripAnsi, replaceAsciiWithEmoji, i18n } = require('../../utils');
 
 /**
  * Component türleri
@@ -15,8 +15,8 @@ const ComponentType = {
  * Client-Server Component analiz modülü
  */
 module.exports = {
-  name: 'component',
-  description: 'Next.js projelerinde server ve client componentleri analiz eder',
+  name: i18n.t('modules.component.name'),
+  description: i18n.t('modules.component.description'),
   
   /**
    * Analiz işlemini gerçekleştirir
@@ -301,7 +301,9 @@ module.exports = {
       
       // Dosya türüne göre renk belirle
       const typeColor = component.type === ComponentType.CLIENT ? chalk.yellow : chalk.green;
-      const typeText = component.type === ComponentType.CLIENT ? 'Client Component' : 'Server Component';
+      const typeText = component.type === ComponentType.CLIENT ? 
+        i18n.t('modules.component.types.client') : 
+        i18n.t('modules.component.types.server');
       
       // Göreceli yolu oluştur (src/ kısmını kaldır)
       let displayPath = relPath;
@@ -370,7 +372,9 @@ module.exports = {
       
       // Dosya türüne göre sınıf belirle
       const typeClass = component.type === ComponentType.CLIENT ? 'client' : 'server';
-      const typeText = component.type === ComponentType.CLIENT ? 'Client Component' : 'Server Component';
+      const typeText = component.type === ComponentType.CLIENT ? 
+        i18n.t('modules.component.types.client') : 
+        i18n.t('modules.component.types.server');
       
       // Göreceli yolu oluştur (src/ kısmını kaldır)
       let displayPath = relPath;
@@ -414,7 +418,9 @@ module.exports = {
             
             const importType = analyzer.components.get(importPath).type;
             const importTypeClass = importType === ComponentType.CLIENT ? 'client' : 'server';
-            const importTypeText = importType === ComponentType.CLIENT ? 'Client Component' : 'Server Component';
+            const importTypeText = importType === ComponentType.CLIENT ? 
+              i18n.t('modules.component.types.client') : 
+              i18n.t('modules.component.types.server');
             
             result += `
               <li>${importDisplayPath} (<span class="${importTypeClass}">${importTypeText}</span>)</li>`;

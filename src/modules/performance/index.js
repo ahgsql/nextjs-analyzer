@@ -1,13 +1,13 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { findFiles, getRelativePath } = require('../../utils');
+const { findFiles, getRelativePath, i18n } = require('../../utils');
 
 /**
  * Performans Analizi Modülü
  */
 module.exports = {
-  name: 'performance',
-  description: 'Next.js projelerinde performans analizi yapar',
+  name: i18n.t('modules.performance.name'),
+  description: i18n.t('modules.performance.description'),
   
   /**
    * Analiz işlemini gerçekleştirir
@@ -62,8 +62,8 @@ module.exports = {
             nonOptimizedImages.push({
               file: getRelativePath(filePath, analyzer.projectPath),
               imageSrc: imgSrc,
-              issue: 'Next.js Image komponenti kullanılmıyor',
-              recommendation: 'next/image import edip, <Image> komponenti kullanın'
+              issue: i18n.t('modules.performance.imageOptimization.issues.noNextImage'),
+              recommendation: i18n.t('modules.performance.imageOptimization.recommendations.useNextImage')
             });
           }
         }
@@ -81,8 +81,8 @@ module.exports = {
             nonOptimizedImages.push({
               file: getRelativePath(filePath, analyzer.projectPath),
               imageSrc: match[1],
-              issue: 'Image komponentinde width ve/veya height belirtilmemiş',
-              recommendation: 'CLS (Cumulative Layout Shift) sorunlarını önlemek için width ve height belirtin'
+              issue: i18n.t('modules.performance.imageOptimization.issues.noWidthHeight'),
+              recommendation: i18n.t('modules.performance.imageOptimization.recommendations.addWidthHeight')
             });
           }
           
@@ -94,8 +94,8 @@ module.exports = {
               nonOptimizedImages.push({
                 file: getRelativePath(filePath, analyzer.projectPath),
                 imageSrc: match[1],
-                issue: 'Hero/banner görüntüsü için priority attribute\'u kullanılmamış',
-                recommendation: 'LCP (Largest Contentful Paint) metriğini iyileştirmek için hero görüntülerine priority ekleyin'
+                issue: i18n.t('modules.performance.imageOptimization.issues.noPriority'),
+                recommendation: i18n.t('modules.performance.imageOptimization.recommendations.addPriority')
               });
             }
           }
@@ -134,7 +134,7 @@ module.exports = {
           largeComponents.push({
             file: relativePath,
             size: fileSize,
-            recommendation: 'Komponenti daha küçük parçalara bölmeyi düşünün'
+            recommendation: i18n.t('modules.performance.bundleSize.largeComponents.recommendation')
           });
         }
         
@@ -193,20 +193,20 @@ module.exports = {
    */
   getLibraryRecommendation(library) {
     const recommendations = {
-      'lodash': 'Sadece ihtiyaç duyulan fonksiyonları import edin: import { debounce } from "lodash/debounce"',
-      'moment': 'date-fns veya day.js gibi daha hafif alternatifleri kullanın',
-      'chart.js': 'Sadece ihtiyaç duyulan chart türlerini import edin',
-      'three.js': 'Dynamic import ile lazy loading yapın',
-      'monaco-editor': 'Dynamic import ile lazy loading yapın',
-      'draft-js': 'Dynamic import ile lazy loading yapın',
-      'quill': 'Dynamic import ile lazy loading yapın',
-      'react-bootstrap': 'Sadece ihtiyaç duyulan komponentleri import edin',
-      'material-ui': '@mui/material\'in tree-shakeable versiyonunu kullanın',
-      '@material-ui/core': 'Sadece ihtiyaç duyulan komponentleri import edin',
-      '@mui/material': 'Sadece ihtiyaç duyulan komponentleri import edin'
+      'lodash': i18n.t('modules.performance.bundleSize.largeImports.recommendations.lodash'),
+      'moment': i18n.t('modules.performance.bundleSize.largeImports.recommendations.moment'),
+      'chart.js': i18n.t('modules.performance.bundleSize.largeImports.recommendations.chartjs'),
+      'three.js': i18n.t('modules.performance.bundleSize.largeImports.recommendations.threejs'),
+      'monaco-editor': i18n.t('modules.performance.bundleSize.largeImports.recommendations.monaco'),
+      'draft-js': i18n.t('modules.performance.bundleSize.largeImports.recommendations.draftjs'),
+      'quill': i18n.t('modules.performance.bundleSize.largeImports.recommendations.quill'),
+      'react-bootstrap': i18n.t('modules.performance.bundleSize.largeImports.recommendations.reactBootstrap'),
+      'material-ui': i18n.t('modules.performance.bundleSize.largeImports.recommendations.materialUi'),
+      '@material-ui/core': i18n.t('modules.performance.bundleSize.largeImports.recommendations.materialCore'),
+      '@mui/material': i18n.t('modules.performance.bundleSize.largeImports.recommendations.mui')
     };
     
-    return recommendations[library] || 'Dynamic import ile lazy loading yapın';
+    return recommendations[library] || i18n.t('modules.performance.bundleSize.largeImports.recommendations.default');
   },
   
   /**
@@ -219,47 +219,50 @@ module.exports = {
      * @returns {string} - Metin formatında görselleştirme
      */
     text(results) {
-      let output = '# Performans Analizi\n\n';
+      let output = `# ${i18n.t('modules.performance.visualize.title')}\n\n`;
       
       // Image optimizasyon sonuçları
-      output += '## Image Optimizasyon\n\n';
+      output += `## ${i18n.t('modules.performance.imageOptimization.title')}\n\n`;
       
       if (results.results.imageOptimization.isFullyOptimized) {
-        output += 'Tüm görüntüler optimize edilmiş. Harika!\n\n';
+        output += `${i18n.t('modules.performance.imageOptimization.fullyOptimized')}\n\n`;
       } else {
-        output += `Toplam ${results.results.imageOptimization.totalImages} görüntüden ${results.results.imageOptimization.nonOptimizedImages.length} tanesi optimize edilmemiş.\n\n`;
+        output += `${i18n.t('modules.performance.imageOptimization.notFullyOptimized', { 
+          totalImages: results.results.imageOptimization.totalImages, 
+          nonOptimizedCount: results.results.imageOptimization.nonOptimizedImages.length 
+        })}\n\n`;
         
-        output += '### Optimize Edilmemiş Görüntüler\n\n';
+        output += `### ${i18n.t('modules.performance.imageOptimization.nonOptimizedImages')}\n\n`;
         results.results.imageOptimization.nonOptimizedImages.forEach(image => {
           output += `- **${image.file}**: ${image.imageSrc}\n`;
-          output += `  - Sorun: ${image.issue}\n`;
-          output += `  - Öneri: ${image.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.performance.visualize.issue')}: ${image.issue}\n`;
+          output += `  - ${i18n.t('modules.performance.visualize.recommendation')}: ${image.recommendation}\n\n`;
         });
       }
       
       // Bundle size sonuçları
-      output += '## Bundle Size Analizi\n\n';
+      output += `## ${i18n.t('modules.performance.bundleSize.title')}\n\n`;
       
       // Büyük komponentler
       if (results.results.bundleSize.largeComponents.length > 0) {
-        output += '### Büyük Komponentler\n\n';
+        output += `### ${i18n.t('modules.performance.bundleSize.largeComponents.title')}\n\n`;
         results.results.bundleSize.largeComponents.forEach(component => {
           output += `- **${component.file}**: ${(component.size / 1024).toFixed(2)} KB\n`;
-          output += `  - Öneri: ${component.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.performance.visualize.recommendation')}: ${component.recommendation}\n\n`;
         });
       } else {
-        output += 'Büyük komponent tespit edilmedi. Harika!\n\n';
+        output += `${i18n.t('modules.performance.bundleSize.largeComponents.noLargeComponents')}\n\n`;
       }
       
       // Büyük kütüphaneler
       if (results.results.bundleSize.largeImports.length > 0) {
-        output += '### Büyük Kütüphaneler\n\n';
+        output += `### ${i18n.t('modules.performance.bundleSize.largeImports.title')}\n\n`;
         results.results.bundleSize.largeImports.forEach(imp => {
           output += `- **${imp.file}**: ${imp.library}\n`;
-          output += `  - Öneri: ${imp.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.performance.visualize.recommendation')}: ${imp.recommendation}\n\n`;
         });
       } else {
-        output += 'Büyük kütüphane import\'u tespit edilmedi. Harika!\n\n';
+        output += `${i18n.t('modules.performance.bundleSize.largeImports.noLargeImports')}\n\n`;
       }
       
       return output;
@@ -273,25 +276,28 @@ module.exports = {
     html(results) {
       let html = `
 <div class="performance-container">
-  <h2>Performans Analizi</h2>
+  <h2>${i18n.t('modules.performance.visualize.title')}</h2>
   
   <!-- Image Optimizasyon -->
   <div class="section">
-    <h3>Image Optimizasyon</h3>`;
+    <h3>${i18n.t('modules.performance.imageOptimization.title')}</h3>`;
       
       if (results.results.imageOptimization.isFullyOptimized) {
         html += `
     <div class="success-message">
-      <p>✅ Tüm görüntüler optimize edilmiş. Harika!</p>
+      <p>✅ ${i18n.t('modules.performance.imageOptimization.fullyOptimized')}</p>
     </div>`;
       } else {
         html += `
     <div class="warning-message">
-      <p>⚠️ Toplam ${results.results.imageOptimization.totalImages} görüntüden ${results.results.imageOptimization.nonOptimizedImages.length} tanesi optimize edilmemiş.</p>
+      <p>⚠️ ${i18n.t('modules.performance.imageOptimization.notFullyOptimized', { 
+        totalImages: results.results.imageOptimization.totalImages, 
+        nonOptimizedCount: results.results.imageOptimization.nonOptimizedImages.length 
+      })}</p>
     </div>
     
     <div class="subsection">
-      <h4>Optimize Edilmemiş Görüntüler</h4>
+      <h4>${i18n.t('modules.performance.imageOptimization.nonOptimizedImages')}</h4>
       <ul class="issue-list">`;
         
         results.results.imageOptimization.nonOptimizedImages.forEach(image => {
@@ -299,8 +305,8 @@ module.exports = {
         <li class="issue-item">
           <div class="issue-file">${image.file}</div>
           <div class="issue-source">${image.imageSrc}</div>
-          <div class="issue-description">Sorun: ${image.issue}</div>
-          <div class="issue-recommendation">Öneri: ${image.recommendation}</div>
+          <div class="issue-description">${i18n.t('modules.performance.visualize.issue')}: ${image.issue}</div>
+          <div class="issue-recommendation">${i18n.t('modules.performance.visualize.recommendation')}: ${image.recommendation}</div>
         </li>`;
         });
         
@@ -315,13 +321,13 @@ module.exports = {
   
   <!-- Bundle Size Analizi -->
   <div class="section">
-    <h3>Bundle Size Analizi</h3>`;
+    <h3>${i18n.t('modules.performance.bundleSize.title')}</h3>`;
       
       // Büyük komponentler
       if (results.results.bundleSize.largeComponents.length > 0) {
         html += `
     <div class="subsection">
-      <h4>Büyük Komponentler</h4>
+      <h4>${i18n.t('modules.performance.bundleSize.largeComponents.title')}</h4>
       <ul class="issue-list">`;
         
         results.results.bundleSize.largeComponents.forEach(component => {
@@ -329,7 +335,7 @@ module.exports = {
         <li class="issue-item">
           <div class="issue-file">${component.file}</div>
           <div class="issue-size">${(component.size / 1024).toFixed(2)} KB</div>
-          <div class="issue-recommendation">Öneri: ${component.recommendation}</div>
+          <div class="issue-recommendation">${i18n.t('modules.performance.visualize.recommendation')}: ${component.recommendation}</div>
         </li>`;
         });
         
@@ -339,7 +345,7 @@ module.exports = {
       } else {
         html += `
     <div class="success-message">
-      <p>✅ Büyük komponent tespit edilmedi. Harika!</p>
+      <p>✅ ${i18n.t('modules.performance.bundleSize.largeComponents.noLargeComponents')}</p>
     </div>`;
       }
       
@@ -347,7 +353,7 @@ module.exports = {
       if (results.results.bundleSize.largeImports.length > 0) {
         html += `
     <div class="subsection">
-      <h4>Büyük Kütüphaneler</h4>
+      <h4>${i18n.t('modules.performance.bundleSize.largeImports.title')}</h4>
       <ul class="issue-list">`;
         
         results.results.bundleSize.largeImports.forEach(imp => {
@@ -355,7 +361,7 @@ module.exports = {
         <li class="issue-item">
           <div class="issue-file">${imp.file}</div>
           <div class="issue-library">${imp.library}</div>
-          <div class="issue-recommendation">Öneri: ${imp.recommendation}</div>
+          <div class="issue-recommendation">${i18n.t('modules.performance.visualize.recommendation')}: ${imp.recommendation}</div>
         </li>`;
         });
         
@@ -365,7 +371,7 @@ module.exports = {
       } else {
         html += `
     <div class="success-message">
-      <p>✅ Büyük kütüphane import'u tespit edilmedi. Harika!</p>
+      <p>✅ ${i18n.t('modules.performance.bundleSize.largeImports.noLargeImports')}</p>
     </div>`;
       }
       

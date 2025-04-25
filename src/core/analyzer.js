@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { findFiles, hasUseClientDirective, extractImports, getRelativePath, logError, logInfo, logSuccess, logWarning } = require('../utils');
+const { findFiles, hasUseClientDirective, extractImports, getRelativePath, logError, logInfo, logSuccess, logWarning, i18n } = require('../utils');
 
 /**
  * Component türleri
@@ -27,13 +27,13 @@ class NextJsAnalyzer {
    * Projeyi analiz eder
    */
   async analyze() {
-    logInfo('Next.js projesi analiz ediliyor...');
+    logInfo(i18n.t('analyzer.messages.analyzing'));
     
     // App ve Pages dizinlerini bul
     this.findNextJsDirs();
     
     if (!this.appDir && !this.pagesDir) {
-      logError('Hata: Next.js app veya pages dizini bulunamadı.');
+      logError(i18n.t('analyzer.messages.noNextJsDirs'));
       return false;
     }
     
@@ -47,11 +47,11 @@ class NextJsAnalyzer {
     }
     
     if (files.length === 0) {
-      logError('Hata: Hiç JavaScript/TypeScript dosyası bulunamadı.');
+      logError(i18n.t('analyzer.messages.noJsFiles'));
       return false;
     }
     
-    logSuccess(`${files.length} dosya bulundu.`);
+    logSuccess(i18n.t('analyzer.messages.filesFound', { count: files.length }));
     
     // Her dosyayı analiz et
     for (const file of files) {

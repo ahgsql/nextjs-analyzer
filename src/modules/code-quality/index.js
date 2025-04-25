@@ -1,13 +1,13 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { getRelativePath } = require('../../utils');
+const { getRelativePath, i18n } = require('../../utils');
 
 /**
  * Kod Kalitesi Analiz Modülü
  */
 module.exports = {
-  name: 'code-quality',
-  description: 'Next.js projelerinde kod kalitesi analizi yapar',
+  name: i18n.t('modules.code-quality.name'),
+  description: i18n.t('modules.code-quality.description'),
   
   /**
    * Analiz işlemini gerçekleştirir
@@ -71,7 +71,7 @@ module.exports = {
     
     return filteredUnusedComponents.map(component => ({
       path: getRelativePath(component, analyzer.projectPath),
-      type: 'unused-component'
+      type: i18n.t('modules.code-quality.types.unused-component')
     }));
   },
   
@@ -85,10 +85,10 @@ module.exports = {
      * @returns {string} - Metin formatında görselleştirme
      */
     text(results) {
-      let output = '# Kullanılmayan Komponentler\n\n';
+      let output = `# ${i18n.t('modules.code-quality.visualize.title')}\n\n`;
       
       if (results.results.unusedComponents.length === 0) {
-        output += 'Kullanılmayan komponent bulunamadı.\n';
+        output += `${i18n.t('modules.code-quality.visualize.noUnusedComponents')}\n`;
       } else {
         results.results.unusedComponents.forEach(component => {
           output += `- ${component.path}\n`;
@@ -106,11 +106,11 @@ module.exports = {
     html(results) {
       let html = `
 <div class="code-quality-container">
-  <h2>Kullanılmayan Komponentler</h2>`;
+  <h2>${i18n.t('modules.code-quality.visualize.title')}</h2>`;
       
       if (results.results.unusedComponents.length === 0) {
         html += `
-  <p>Kullanılmayan komponent bulunamadı.</p>`;
+  <p>${i18n.t('modules.code-quality.visualize.noUnusedComponents')}</p>`;
       } else {
         html += `
   <ul class="unused-components-list">`;

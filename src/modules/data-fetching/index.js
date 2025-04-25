@@ -1,13 +1,13 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { findFiles, getRelativePath } = require('../../utils');
+const { findFiles, getRelativePath, i18n } = require('../../utils');
 
 /**
  * Veri Fetching Analizi Modülü
  */
 module.exports = {
-  name: 'data-fetching',
-  description: 'Next.js projelerinde veri fetching yöntemlerini analiz eder',
+  name: i18n.t('modules.data-fetching.name'),
+  description: i18n.t('modules.data-fetching.description'),
   
   /**
    * Analiz işlemini gerçekleştirir
@@ -149,7 +149,7 @@ module.exports = {
         if (content.includes('axios.') || content.includes('import axios')) {
           axios.push({
             file: relativePath,
-            recommendation: 'Axios için cache mekanizması eklemek için axios-cache-adapter kullanmayı düşünün'
+            recommendation: i18n.t('modules.data-fetching.recommendations.axios.default')
           });
         }
       } catch (error) {
@@ -189,8 +189,8 @@ module.exports = {
         if (content.includes('getServerSideProps') && content.includes('getStaticProps')) {
           issues.push({
             file: relativePath,
-            issue: 'getServerSideProps ve getStaticProps aynı dosyada kullanılıyor',
-            recommendation: 'Bu iki fonksiyonu aynı dosyada kullanmak yerine, ayrı dosyalara ayırın'
+            issue: i18n.t('modules.data-fetching.issues.bothDataFetchingMethods.issue'),
+            recommendation: i18n.t('modules.data-fetching.issues.bothDataFetchingMethods.recommendation')
           });
         }
         
@@ -198,8 +198,8 @@ module.exports = {
         if (content.includes('getStaticProps') && !content.includes('revalidate')) {
           issues.push({
             file: relativePath,
-            issue: 'getStaticProps kullanılıyor ama revalidate belirtilmemiş',
-            recommendation: 'ISR (Incremental Static Regeneration) için revalidate ekleyin'
+            issue: i18n.t('modules.data-fetching.issues.staticPropsNoRevalidate.issue'),
+            recommendation: i18n.t('modules.data-fetching.issues.staticPropsNoRevalidate.recommendation')
           });
         }
         
@@ -208,8 +208,8 @@ module.exports = {
             !content.includes('cache:') && !content.includes('next: { revalidate:')) {
           issues.push({
             file: relativePath,
-            issue: 'fetch API kullanılıyor ama cache stratejisi belirtilmemiş',
-            recommendation: 'fetch isteğine cache stratejisi ekleyin: { cache: "force-cache" } veya { cache: "no-store" }'
+            issue: i18n.t('modules.data-fetching.issues.fetchNoCache.issue'),
+            recommendation: i18n.t('modules.data-fetching.issues.fetchNoCache.recommendation')
           });
         }
       } catch (error) {
@@ -221,19 +221,19 @@ module.exports = {
     // Genel öneriler
     if (analyzer.appDir) {
       recommendations.push({
-        title: 'App Router için Veri Fetching',
-        description: 'App Router kullanıyorsanız, React Server Components ile veri fetching yapabilirsiniz. Bu, client-side JavaScript\'i azaltır ve SEO\'yu iyileştirir.'
+        title: i18n.t('modules.data-fetching.generalRecommendations.appRouter.title'),
+        description: i18n.t('modules.data-fetching.generalRecommendations.appRouter.description')
       });
     }
     
     recommendations.push({
-      title: 'SWR veya React Query Kullanımı',
-      description: 'Client-side veri fetching için SWR veya React Query kullanın. Bu kütüphaneler, caching, revalidation, error handling gibi özellikleri otomatik olarak sağlar.'
+      title: i18n.t('modules.data-fetching.generalRecommendations.clientSide.title'),
+      description: i18n.t('modules.data-fetching.generalRecommendations.clientSide.description')
     });
     
     recommendations.push({
-      title: 'Incremental Static Regeneration (ISR)',
-      description: 'Sık değişmeyen veriler için getStaticProps ile ISR kullanın. Bu, statik sayfaların belirli aralıklarla yeniden oluşturulmasını sağlar.'
+      title: i18n.t('modules.data-fetching.generalRecommendations.isr.title'),
+      description: i18n.t('modules.data-fetching.generalRecommendations.isr.description')
     });
     
     return {
@@ -250,14 +250,14 @@ module.exports = {
    */
   getServerSidePropsRecommendation(content, revalidate) {
     if (revalidate) {
-      return 'getServerSideProps ile revalidate kullanmak yerine, getStaticProps kullanmayı düşünün';
+      return i18n.t('modules.data-fetching.recommendations.serverSideProps.withRevalidate');
     }
     
     if (content.includes('req.cookies') || content.includes('req.headers')) {
-      return 'Request bilgilerine ihtiyaç duyduğunuz için getServerSideProps doğru bir seçim';
+      return i18n.t('modules.data-fetching.recommendations.serverSideProps.withRequestData');
     }
     
-    return 'Eğer veri sık değişmiyorsa, getStaticProps + revalidate (ISR) kullanmayı düşünün';
+    return i18n.t('modules.data-fetching.recommendations.serverSideProps.default');
   },
   
   /**
@@ -268,14 +268,14 @@ module.exports = {
    */
   getStaticPropsRecommendation(content, revalidate) {
     if (!revalidate) {
-      return 'Veri değişebiliyorsa, revalidate ekleyerek ISR (Incremental Static Regeneration) kullanın';
+      return i18n.t('modules.data-fetching.recommendations.staticProps.noRevalidate');
     }
     
     if (revalidate < 10) {
-      return 'Revalidate değeri çok düşük. Gereksiz yeniden oluşturmaları önlemek için daha yüksek bir değer kullanmayı düşünün';
+      return i18n.t('modules.data-fetching.recommendations.staticProps.lowRevalidate');
     }
     
-    return 'getStaticProps + revalidate (ISR) iyi bir seçim';
+    return i18n.t('modules.data-fetching.recommendations.staticProps.default');
   },
   
   /**
@@ -286,18 +286,18 @@ module.exports = {
    */
   getStaticPathsRecommendation(content, fallback) {
     if (fallback === 'false') {
-      return 'fallback: false, bilinmeyen path\'ler için 404 döndürür. Eğer yeni içerikler ekleniyorsa, fallback: "blocking" veya fallback: true kullanmayı düşünün';
+      return i18n.t('modules.data-fetching.recommendations.staticPaths.fallbackFalse');
     }
     
     if (fallback === 'blocking') {
-      return 'fallback: "blocking", iyi bir seçim. Bilinmeyen path\'ler için SSR gibi davranır';
+      return i18n.t('modules.data-fetching.recommendations.staticPaths.fallbackBlocking');
     }
     
     if (fallback === 'true') {
-      return 'fallback: true ile, loading state göstermeyi unutmayın';
+      return i18n.t('modules.data-fetching.recommendations.staticPaths.fallbackTrue');
     }
     
-    return 'getStaticPaths için fallback değeri belirtin';
+    return i18n.t('modules.data-fetching.recommendations.staticPaths.default');
   },
   
   /**
@@ -307,14 +307,14 @@ module.exports = {
    */
   getSWRRecommendation(content) {
     if (!content.includes('revalidateOnFocus')) {
-      return 'revalidateOnFocus, revalidateOnReconnect gibi seçenekleri belirtin';
+      return i18n.t('modules.data-fetching.recommendations.swr.noRevalidateOnFocus');
     }
     
     if (!content.includes('dedupingInterval')) {
-      return 'Gereksiz istekleri önlemek için dedupingInterval ekleyin';
+      return i18n.t('modules.data-fetching.recommendations.swr.noDedupingInterval');
     }
     
-    return 'SWR iyi bir client-side veri fetching seçimi';
+    return i18n.t('modules.data-fetching.recommendations.swr.default');
   },
   
   /**
@@ -325,14 +325,14 @@ module.exports = {
    */
   getReactQueryRecommendation(content, staleTime) {
     if (staleTime === null) {
-      return 'staleTime ve cacheTime değerlerini belirtin';
+      return i18n.t('modules.data-fetching.recommendations.reactQuery.noStaleTime');
     }
     
     if (staleTime === 0) {
-      return 'staleTime: 0, her render\'da yeni veri çeker. Gereksiz istekleri önlemek için daha yüksek bir değer kullanmayı düşünün';
+      return i18n.t('modules.data-fetching.recommendations.reactQuery.zeroStaleTime');
     }
     
-    return 'React Query iyi bir client-side veri fetching seçimi';
+    return i18n.t('modules.data-fetching.recommendations.reactQuery.default');
   },
   
   /**
@@ -343,18 +343,18 @@ module.exports = {
    */
   getFetchRecommendation(content, cache) {
     if (cache === null) {
-      return 'fetch isteğine cache stratejisi ekleyin: { cache: "force-cache" } veya { cache: "no-store" }';
+      return i18n.t('modules.data-fetching.recommendations.fetch.noCache');
     }
     
     if (cache === 'force-cache') {
-      return 'force-cache, statik veriler için iyi bir seçim';
+      return i18n.t('modules.data-fetching.recommendations.fetch.forceCache');
     }
     
     if (cache === 'no-store') {
-      return 'no-store, dinamik veriler için iyi bir seçim';
+      return i18n.t('modules.data-fetching.recommendations.fetch.noStore');
     }
     
-    return 'fetch API için uygun cache stratejisi seçin';
+    return i18n.t('modules.data-fetching.recommendations.fetch.default');
   },
   
   /**
@@ -367,53 +367,53 @@ module.exports = {
      * @returns {string} - Metin formatında görselleştirme
      */
     text(results) {
-      let output = '# Veri Fetching Analizi\n\n';
+      let output = `# ${i18n.t('modules.data-fetching.visualize.title')}\n\n`;
       
       // Veri fetching yöntemleri
-      output += '## Veri Fetching Yöntemleri\n\n';
+      output += `## ${i18n.t('modules.data-fetching.visualize.methods.title')}\n\n`;
       
       // getServerSideProps
       if (results.results.fetchingMethods.getServerSideProps.length > 0) {
-        output += '### getServerSideProps\n\n';
+        output += `### ${i18n.t('modules.data-fetching.visualize.methods.serverSideProps')}\n\n`;
         results.results.fetchingMethods.getServerSideProps.forEach(item => {
           output += `- **${item.file}**\n`;
           if (item.revalidate !== null) {
-            output += `  - Revalidate: ${item.revalidate} saniye\n`;
+            output += `  - ${i18n.t('modules.data-fetching.visualize.methods.revalidate')}: ${item.revalidate} saniye\n`;
           }
-          output += `  - Öneri: ${item.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}\n\n`;
         });
       }
       
       // getStaticProps
       if (results.results.fetchingMethods.getStaticProps.length > 0) {
-        output += '### getStaticProps\n\n';
+        output += `### ${i18n.t('modules.data-fetching.visualize.methods.staticProps')}\n\n`;
         results.results.fetchingMethods.getStaticProps.forEach(item => {
           output += `- **${item.file}**\n`;
           if (item.revalidate !== null) {
-            output += `  - Revalidate: ${item.revalidate} saniye\n`;
+            output += `  - ${i18n.t('modules.data-fetching.visualize.methods.revalidate')}: ${item.revalidate} saniye\n`;
           } else {
-            output += `  - Revalidate: Belirtilmemiş\n`;
+            output += `  - ${i18n.t('modules.data-fetching.visualize.methods.revalidate')}: ${i18n.t('modules.data-fetching.visualize.methods.notSpecified')}\n`;
           }
-          output += `  - Öneri: ${item.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}\n\n`;
         });
       }
       
       // getStaticPaths
       if (results.results.fetchingMethods.getStaticPaths.length > 0) {
-        output += '### getStaticPaths\n\n';
+        output += `### ${i18n.t('modules.data-fetching.visualize.methods.staticPaths')}\n\n`;
         results.results.fetchingMethods.getStaticPaths.forEach(item => {
           output += `- **${item.file}**\n`;
           if (item.fallback !== null) {
-            output += `  - Fallback: ${item.fallback}\n`;
+            output += `  - ${i18n.t('modules.data-fetching.visualize.methods.fallback')}: ${item.fallback}\n`;
           } else {
-            output += `  - Fallback: Belirtilmemiş\n`;
+            output += `  - ${i18n.t('modules.data-fetching.visualize.methods.fallback')}: ${i18n.t('modules.data-fetching.visualize.methods.notSpecified')}\n`;
           }
-          output += `  - Öneri: ${item.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}\n\n`;
         });
       }
       
       // Client-side veri fetching
-      output += '## Client-side Veri Fetching\n\n';
+      output += `## ${i18n.t('modules.data-fetching.visualize.clientSide.title')}\n\n`;
       
       // SWR
       if (results.results.fetchingMethods.swr.length > 0) {
@@ -421,9 +421,9 @@ module.exports = {
         results.results.fetchingMethods.swr.forEach(item => {
           output += `- **${item.file}**\n`;
           if (item.revalidateOnFocus !== null) {
-            output += `  - revalidateOnFocus: ${item.revalidateOnFocus}\n`;
+            output += `  - ${i18n.t('modules.data-fetching.visualize.clientSide.revalidateOnFocus')}: ${item.revalidateOnFocus}\n`;
           }
-          output += `  - Öneri: ${item.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}\n\n`;
         });
       }
       
@@ -433,9 +433,9 @@ module.exports = {
         results.results.fetchingMethods.reactQuery.forEach(item => {
           output += `- **${item.file}**\n`;
           if (item.staleTime !== null) {
-            output += `  - staleTime: ${item.staleTime} ms\n`;
+            output += `  - ${i18n.t('modules.data-fetching.visualize.clientSide.staleTime')}: ${item.staleTime} ms\n`;
           }
-          output += `  - Öneri: ${item.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}\n\n`;
         });
       }
       
@@ -445,11 +445,11 @@ module.exports = {
         results.results.fetchingMethods.fetch.forEach(item => {
           output += `- **${item.file}**\n`;
           if (item.cache !== null) {
-            output += `  - Cache: ${item.cache}\n`;
+            output += `  - ${i18n.t('modules.data-fetching.visualize.clientSide.cache')}: ${item.cache}\n`;
           } else {
-            output += `  - Cache: Belirtilmemiş\n`;
+            output += `  - ${i18n.t('modules.data-fetching.visualize.clientSide.cache')}: ${i18n.t('modules.data-fetching.visualize.methods.notSpecified')}\n`;
           }
-          output += `  - Öneri: ${item.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}\n\n`;
         });
       }
       
@@ -458,28 +458,28 @@ module.exports = {
         output += '### Axios\n\n';
         results.results.fetchingMethods.axios.forEach(item => {
           output += `- **${item.file}**\n`;
-          output += `  - Öneri: ${item.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}\n\n`;
         });
       }
       
       // Cache stratejileri
-      output += '## Cache Stratejileri\n\n';
+      output += `## ${i18n.t('modules.data-fetching.visualize.cacheStrategies.title')}\n\n`;
       
       // Sorunlar
       if (results.results.cacheStrategies.issues.length > 0) {
-        output += '### Tespit Edilen Sorunlar\n\n';
+        output += `### ${i18n.t('modules.data-fetching.visualize.cacheStrategies.issues.title')}\n\n`;
         results.results.cacheStrategies.issues.forEach(issue => {
           output += `- **${issue.file}**\n`;
-          output += `  - Sorun: ${issue.issue}\n`;
-          output += `  - Öneri: ${issue.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.data-fetching.visualize.cacheStrategies.issues.issue')}: ${issue.issue}\n`;
+          output += `  - ${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${issue.recommendation}\n\n`;
         });
       } else {
-        output += '### Tespit Edilen Sorunlar\n\n';
-        output += 'Herhangi bir sorun tespit edilmedi. Harika!\n\n';
+        output += `### ${i18n.t('modules.data-fetching.visualize.cacheStrategies.issues.title')}\n\n`;
+        output += `${i18n.t('modules.data-fetching.visualize.cacheStrategies.issues.noIssues')}\n\n`;
       }
       
       // Genel öneriler
-      output += '### Genel Öneriler\n\n';
+      output += `### ${i18n.t('modules.data-fetching.visualize.cacheStrategies.recommendations.title')}\n\n`;
       results.results.cacheStrategies.recommendations.forEach(recommendation => {
         output += `- **${recommendation.title}**\n`;
         output += `  - ${recommendation.description}\n\n`;
@@ -496,17 +496,17 @@ module.exports = {
     html(results) {
       let html = `
 <div class="data-fetching-container">
-  <h2>Veri Fetching Analizi</h2>
+  <h2>${i18n.t('modules.data-fetching.visualize.title')}</h2>
   
   <!-- Veri Fetching Yöntemleri -->
   <div class="section">
-    <h3>Veri Fetching Yöntemleri</h3>`;
+    <h3>${i18n.t('modules.data-fetching.visualize.methods.title')}</h3>`;
       
       // getServerSideProps
       if (results.results.fetchingMethods.getServerSideProps.length > 0) {
         html += `
     <div class="subsection">
-      <h4>getServerSideProps</h4>
+      <h4>${i18n.t('modules.data-fetching.visualize.methods.serverSideProps')}</h4>
       <ul class="method-list">`;
         
         results.results.fetchingMethods.getServerSideProps.forEach(item => {
@@ -516,11 +516,11 @@ module.exports = {
           
           if (item.revalidate !== null) {
             html += `
-          <div class="method-detail">Revalidate: ${item.revalidate} saniye</div>`;
+          <div class="method-detail">${i18n.t('modules.data-fetching.visualize.methods.revalidate')}: ${item.revalidate} saniye</div>`;
           }
           
           html += `
-          <div class="method-recommendation">Öneri: ${item.recommendation}</div>
+          <div class="method-recommendation">${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}</div>
         </li>`;
         });
         
@@ -533,7 +533,7 @@ module.exports = {
       if (results.results.fetchingMethods.getStaticProps.length > 0) {
         html += `
     <div class="subsection">
-      <h4>getStaticProps</h4>
+      <h4>${i18n.t('modules.data-fetching.visualize.methods.staticProps')}</h4>
       <ul class="method-list">`;
         
         results.results.fetchingMethods.getStaticProps.forEach(item => {
@@ -543,14 +543,14 @@ module.exports = {
           
           if (item.revalidate !== null) {
             html += `
-          <div class="method-detail">Revalidate: ${item.revalidate} saniye</div>`;
+          <div class="method-detail">${i18n.t('modules.data-fetching.visualize.methods.revalidate')}: ${item.revalidate} saniye</div>`;
           } else {
             html += `
-          <div class="method-detail warning">Revalidate: Belirtilmemiş</div>`;
+          <div class="method-detail warning">${i18n.t('modules.data-fetching.visualize.methods.revalidate')}: ${i18n.t('modules.data-fetching.visualize.methods.notSpecified')}</div>`;
           }
           
           html += `
-          <div class="method-recommendation">Öneri: ${item.recommendation}</div>
+          <div class="method-recommendation">${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}</div>
         </li>`;
         });
         
@@ -563,7 +563,7 @@ module.exports = {
       if (results.results.fetchingMethods.getStaticPaths.length > 0) {
         html += `
     <div class="subsection">
-      <h4>getStaticPaths</h4>
+      <h4>${i18n.t('modules.data-fetching.visualize.methods.staticPaths')}</h4>
       <ul class="method-list">`;
         
         results.results.fetchingMethods.getStaticPaths.forEach(item => {
@@ -573,14 +573,14 @@ module.exports = {
           
           if (item.fallback !== null) {
             html += `
-          <div class="method-detail">Fallback: ${item.fallback}</div>`;
+          <div class="method-detail">${i18n.t('modules.data-fetching.visualize.methods.fallback')}: ${item.fallback}</div>`;
           } else {
             html += `
-          <div class="method-detail warning">Fallback: Belirtilmemiş</div>`;
+          <div class="method-detail warning">${i18n.t('modules.data-fetching.visualize.methods.fallback')}: ${i18n.t('modules.data-fetching.visualize.methods.notSpecified')}</div>`;
           }
           
           html += `
-          <div class="method-recommendation">Öneri: ${item.recommendation}</div>
+          <div class="method-recommendation">${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}</div>
         </li>`;
         });
         
@@ -595,7 +595,7 @@ module.exports = {
   
   <!-- Client-side Veri Fetching -->
   <div class="section">
-    <h3>Client-side Veri Fetching</h3>`;
+    <h3>${i18n.t('modules.data-fetching.visualize.clientSide.title')}</h3>`;
       
       // SWR
       if (results.results.fetchingMethods.swr.length > 0) {
@@ -611,11 +611,11 @@ module.exports = {
           
           if (item.revalidateOnFocus !== null) {
             html += `
-          <div class="method-detail">revalidateOnFocus: ${item.revalidateOnFocus}</div>`;
+          <div class="method-detail">${i18n.t('modules.data-fetching.visualize.clientSide.revalidateOnFocus')}: ${item.revalidateOnFocus}</div>`;
           }
           
           html += `
-          <div class="method-recommendation">Öneri: ${item.recommendation}</div>
+          <div class="method-recommendation">${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}</div>
         </li>`;
         });
         
@@ -638,11 +638,11 @@ module.exports = {
           
           if (item.staleTime !== null) {
             html += `
-          <div class="method-detail">staleTime: ${item.staleTime} ms</div>`;
+          <div class="method-detail">${i18n.t('modules.data-fetching.visualize.clientSide.staleTime')}: ${item.staleTime} ms</div>`;
           }
           
           html += `
-          <div class="method-recommendation">Öneri: ${item.recommendation}</div>
+          <div class="method-recommendation">${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}</div>
         </li>`;
         });
         
@@ -665,14 +665,14 @@ module.exports = {
           
           if (item.cache !== null) {
             html += `
-          <div class="method-detail">Cache: ${item.cache}</div>`;
+          <div class="method-detail">${i18n.t('modules.data-fetching.visualize.clientSide.cache')}: ${item.cache}</div>`;
           } else {
             html += `
-          <div class="method-detail warning">Cache: Belirtilmemiş</div>`;
+          <div class="method-detail warning">${i18n.t('modules.data-fetching.visualize.clientSide.cache')}: ${i18n.t('modules.data-fetching.visualize.methods.notSpecified')}</div>`;
           }
           
           html += `
-          <div class="method-recommendation">Öneri: ${item.recommendation}</div>
+          <div class="method-recommendation">${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}</div>
         </li>`;
         });
         
@@ -692,7 +692,7 @@ module.exports = {
           html += `
         <li class="method-item">
           <div class="method-file">${item.file}</div>
-          <div class="method-recommendation">Öneri: ${item.recommendation}</div>
+          <div class="method-recommendation">${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${item.recommendation}</div>
         </li>`;
         });
         
@@ -707,12 +707,12 @@ module.exports = {
   
   <!-- Cache Stratejileri -->
   <div class="section">
-    <h3>Cache Stratejileri</h3>`;
+    <h3>${i18n.t('modules.data-fetching.visualize.cacheStrategies.title')}</h3>`;
       
       // Sorunlar
       html += `
     <div class="subsection">
-      <h4>Tespit Edilen Sorunlar</h4>`;
+      <h4>${i18n.t('modules.data-fetching.visualize.cacheStrategies.issues.title')}</h4>`;
       
       if (results.results.cacheStrategies.issues.length > 0) {
         html += `
@@ -722,8 +722,8 @@ module.exports = {
           html += `
         <li class="issue-item">
           <div class="issue-file">${issue.file}</div>
-          <div class="issue-description">Sorun: ${issue.issue}</div>
-          <div class="issue-recommendation">Öneri: ${issue.recommendation}</div>
+          <div class="issue-description">${i18n.t('modules.data-fetching.visualize.cacheStrategies.issues.issue')}: ${issue.issue}</div>
+          <div class="issue-recommendation">${i18n.t('modules.data-fetching.visualize.methods.recommendation')}: ${issue.recommendation}</div>
         </li>`;
         });
         
@@ -732,7 +732,7 @@ module.exports = {
       } else {
         html += `
       <div class="success-message">
-        <p>✅ Herhangi bir sorun tespit edilmedi. Harika!</p>
+        <p>✅ ${i18n.t('modules.data-fetching.visualize.cacheStrategies.issues.noIssues')}</p>
       </div>`;
       }
       
@@ -741,7 +741,7 @@ module.exports = {
     </div>
     
     <div class="subsection">
-      <h4>Genel Öneriler</h4>
+      <h4>${i18n.t('modules.data-fetching.visualize.cacheStrategies.recommendations.title')}</h4>
       <ul class="recommendation-list">`;
       
       results.results.cacheStrategies.recommendations.forEach(recommendation => {

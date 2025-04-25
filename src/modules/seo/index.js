@@ -1,13 +1,13 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { findFiles, getRelativePath } = require('../../utils');
+const { findFiles, getRelativePath, i18n } = require('../../utils');
 
 /**
  * SEO Analizi Modülü
  */
 module.exports = {
-  name: 'seo',
-  description: 'Next.js projelerinde SEO analizi yapar',
+  name: i18n.t('modules.seo.name'),
+  description: i18n.t('modules.seo.description'),
   
   /**
    * Analiz işlemini gerçekleştirir
@@ -107,8 +107,8 @@ module.exports = {
             !content.includes('useRouter')) {
           issues.push({
             file: relativePath,
-            issue: 'Title tag eksik',
-            recommendation: 'Sayfaya title tag ekleyin. Bu, SEO için çok önemlidir.'
+            issue: i18n.t('modules.seo.metaTags.issues.titleMissing'),
+            recommendation: i18n.t('modules.seo.metaTags.recommendations.titleTag')
           });
         }
         
@@ -118,8 +118,8 @@ module.exports = {
             !content.includes('NextSeo')) {
           issues.push({
             file: relativePath,
-            issue: 'Meta description eksik',
-            recommendation: 'Sayfaya meta description ekleyin. Bu, arama sonuçlarında görüntülenen açıklamadır.'
+            issue: i18n.t('modules.seo.metaTags.issues.descriptionMissing'),
+            recommendation: i18n.t('modules.seo.metaTags.recommendations.descriptionTag')
           });
         }
         
@@ -130,8 +130,8 @@ module.exports = {
             !content.includes('NextSeo')) {
           issues.push({
             file: relativePath,
-            issue: 'Open Graph meta tag\'leri eksik',
-            recommendation: 'Sosyal medya paylaşımları için Open Graph meta tag\'leri ekleyin.'
+            issue: i18n.t('modules.seo.metaTags.issues.ogMissing'),
+            recommendation: i18n.t('modules.seo.metaTags.recommendations.ogTags')
           });
         }
         
@@ -142,8 +142,8 @@ module.exports = {
             !content.includes('NextSeo')) {
           issues.push({
             file: relativePath,
-            issue: 'Twitter Card meta tag\'leri eksik',
-            recommendation: 'Twitter paylaşımları için Twitter Card meta tag\'leri ekleyin.'
+            issue: i18n.t('modules.seo.metaTags.issues.twitterMissing'),
+            recommendation: i18n.t('modules.seo.metaTags.recommendations.twitterTags')
           });
         }
         
@@ -153,8 +153,8 @@ module.exports = {
             !content.includes('NextSeo')) {
           issues.push({
             file: relativePath,
-            issue: 'Canonical URL eksik',
-            recommendation: 'Duplicate content sorunlarını önlemek için canonical URL ekleyin.'
+            issue: i18n.t('modules.seo.metaTags.issues.canonicalMissing'),
+            recommendation: i18n.t('modules.seo.metaTags.recommendations.canonicalUrl')
           });
         }
         
@@ -162,8 +162,8 @@ module.exports = {
         if (content.includes('noindex') || content.includes('nofollow')) {
           issues.push({
             file: relativePath,
-            issue: 'Robots meta tag\'i sayfanın indekslenmesini engelliyor',
-            recommendation: 'Eğer bu sayfa indekslenmeli ise, noindex ve nofollow değerlerini kaldırın.'
+            issue: i18n.t('modules.seo.metaTags.issues.robotsBlocking'),
+            recommendation: i18n.t('modules.seo.metaTags.recommendations.robotsTags')
           });
         }
         
@@ -174,8 +174,8 @@ module.exports = {
             path.basename(filePath) !== 'next-seo.config.js') {
           issues.push({
             file: relativePath,
-            issue: 'Viewport meta tag eksik',
-            recommendation: 'Mobil uyumluluk için viewport meta tag ekleyin.'
+            issue: i18n.t('modules.seo.metaTags.issues.viewportMissing'),
+            recommendation: i18n.t('modules.seo.metaTags.recommendations.viewportTag')
           });
         }
         
@@ -185,8 +185,8 @@ module.exports = {
             path.basename(filePath) !== 'next-seo.config.js') {
           issues.push({
             file: relativePath,
-            issue: 'HTML lang attribute eksik',
-            recommendation: 'Erişilebilirlik ve SEO için HTML lang attribute ekleyin.'
+            issue: i18n.t('modules.seo.metaTags.issues.langMissing'),
+            recommendation: i18n.t('modules.seo.metaTags.recommendations.langAttribute')
           });
         }
       } catch (error) {
@@ -199,20 +199,20 @@ module.exports = {
       issues,
       recommendations: [
         {
-          title: 'next-seo Kullanımı',
-          description: 'next-seo paketi, Next.js projelerinde SEO yönetimini kolaylaştırır. Bu paketi kullanarak, tüm meta tag\'leri merkezi bir şekilde yönetebilirsiniz.'
+          title: i18n.t('modules.seo.metaTags.recommendations.nextSeo.title'),
+          description: i18n.t('modules.seo.metaTags.recommendations.nextSeo.description')
         },
         {
-          title: 'Dinamik Meta Tag\'ler',
-          description: 'Dinamik içerikli sayfalar için, sayfa içeriğine göre dinamik meta tag\'ler oluşturun. Bu, arama motorlarının sayfanızı daha iyi anlamasını sağlar.'
+          title: i18n.t('modules.seo.metaTags.recommendations.dynamicMetaTags.title'),
+          description: i18n.t('modules.seo.metaTags.recommendations.dynamicMetaTags.description')
         },
         {
-          title: 'Structured Data',
-          description: 'JSON-LD formatında structured data ekleyin. Bu, arama sonuçlarında zengin snippet\'ler görüntülenmesini sağlar.'
+          title: i18n.t('modules.seo.metaTags.recommendations.structuredData.title'),
+          description: i18n.t('modules.seo.metaTags.recommendations.structuredData.description')
         },
         {
-          title: 'Hreflang Tag\'leri',
-          description: 'Çok dilli siteler için hreflang tag\'leri ekleyin. Bu, arama motorlarının doğru dildeki sayfayı göstermesini sağlar.'
+          title: i18n.t('modules.seo.metaTags.recommendations.hreflang.title'),
+          description: i18n.t('modules.seo.metaTags.recommendations.hreflang.description')
         }
       ]
     };
@@ -240,24 +240,24 @@ module.exports = {
         if (h1Count > 1) {
           issues.push({
             file: relativePath,
-            issue: 'Birden fazla H1 tag\'i kullanılmış',
-            recommendation: 'Her sayfada sadece bir H1 tag\'i kullanın. Bu, sayfa yapısını daha iyi tanımlar.'
+            issue: i18n.t('modules.seo.semanticHtml.issues.multipleH1'),
+            recommendation: i18n.t('modules.seo.semanticHtml.recommendations.headingHierarchy')
           });
         }
         
         if (hasH2BeforeH1) {
           issues.push({
             file: relativePath,
-            issue: 'H2 tag\'i H1\'den önce kullanılmış',
-            recommendation: 'Heading hiyerarşisini düzgün kullanın. H1 tag\'i sayfanın en üstünde olmalıdır.'
+            issue: i18n.t('modules.seo.semanticHtml.issues.h2BeforeH1'),
+            recommendation: i18n.t('modules.seo.semanticHtml.recommendations.headingHierarchy')
           });
         }
         
         if (hasH3BeforeH2) {
           issues.push({
             file: relativePath,
-            issue: 'H3 tag\'i H2\'den önce kullanılmış',
-            recommendation: 'Heading hiyerarşisini düzgün kullanın. H3 tag\'leri H2\'lerden sonra gelmelidir.'
+            issue: i18n.t('modules.seo.semanticHtml.issues.h3BeforeH2'),
+            recommendation: i18n.t('modules.seo.semanticHtml.recommendations.h3AfterH2')
           });
         }
         
@@ -274,8 +274,8 @@ module.exports = {
         if (!hasSemanticTags && content.includes('<div')) {
           issues.push({
             file: relativePath,
-            issue: 'Semantik HTML tag\'leri kullanılmamış',
-            recommendation: 'div ve span yerine semantik HTML5 tag\'lerini (header, nav, main, article, section, aside, footer) kullanın.'
+            issue: i18n.t('modules.seo.semanticHtml.issues.noSemanticTags'),
+            recommendation: i18n.t('modules.seo.semanticHtml.recommendations.useSemanticTags')
           });
         }
         
@@ -286,8 +286,8 @@ module.exports = {
         if (imgTagsWithoutAlt.length > 0) {
           issues.push({
             file: relativePath,
-            issue: 'Image tag\'lerinde alt attribute eksik',
-            recommendation: 'Tüm image tag\'lerine alt attribute ekleyin. Bu, erişilebilirlik ve SEO için önemlidir.'
+            issue: i18n.t('modules.seo.semanticHtml.issues.imgWithoutAlt'),
+            recommendation: i18n.t('modules.seo.semanticHtml.recommendations.addAltAttributes')
           });
         }
         
@@ -304,8 +304,8 @@ module.exports = {
         if (genericLinkTexts.length > 0) {
           issues.push({
             file: relativePath,
-            issue: 'Jenerik link text\'leri kullanılmış',
-            recommendation: '"here", "click", "link", "read more" gibi jenerik link text\'leri yerine, daha açıklayıcı link text\'leri kullanın.'
+            issue: i18n.t('modules.seo.semanticHtml.issues.genericLinkText'),
+            recommendation: i18n.t('modules.seo.semanticHtml.recommendations.descriptiveLinkText')
           });
         }
       } catch (error) {
@@ -318,20 +318,20 @@ module.exports = {
       issues,
       recommendations: [
         {
-          title: 'Semantik HTML Kullanımı',
-          description: 'Semantik HTML tag\'leri, sayfanızın yapısını daha iyi tanımlar ve arama motorlarının içeriğinizi daha iyi anlamasını sağlar.'
+          title: i18n.t('modules.seo.semanticHtml.recommendations.semanticHtml.title'),
+          description: i18n.t('modules.seo.semanticHtml.recommendations.semanticHtml.description')
         },
         {
-          title: 'Heading Hiyerarşisi',
-          description: 'Düzgün bir heading hiyerarşisi kullanın. Her sayfada bir H1 tag\'i olmalı ve diğer heading\'ler hiyerarşik olarak sıralanmalıdır.'
+          title: i18n.t('modules.seo.semanticHtml.recommendations.headings.title'),
+          description: i18n.t('modules.seo.semanticHtml.recommendations.headings.description')
         },
         {
-          title: 'Alt Attribute',
-          description: 'Tüm image tag\'lerine alt attribute ekleyin. Bu, görsel içeriğin metin alternatifini sağlar ve erişilebilirlik için önemlidir.'
+          title: i18n.t('modules.seo.semanticHtml.recommendations.altAttributes.title'),
+          description: i18n.t('modules.seo.semanticHtml.recommendations.altAttributes.description')
         },
         {
-          title: 'Açıklayıcı Link Text\'leri',
-          description: 'Link text\'leri, link\'in nereye gittiğini açıkça belirtmelidir. "here", "click" gibi jenerik text\'ler yerine, daha açıklayıcı text\'ler kullanın.'
+          title: i18n.t('modules.seo.semanticHtml.recommendations.linkTexts.title'),
+          description: i18n.t('modules.seo.semanticHtml.recommendations.linkTexts.description')
         }
       ]
     };
@@ -358,8 +358,8 @@ module.exports = {
         if (!hasAriaAttributes && !hasRoles && (content.includes('<button') || content.includes('<input') || content.includes('<select'))) {
           issues.push({
             file: relativePath,
-            issue: 'ARIA attribute\'leri eksik',
-            recommendation: 'Erişilebilirlik için ARIA attribute\'leri ve role\'ler ekleyin.'
+            issue: i18n.t('modules.seo.accessibility.issues.ariaAttributesMissing'),
+            recommendation: i18n.t('modules.seo.accessibility.recommendations.addAriaAttributes')
           });
         }
         
@@ -371,8 +371,8 @@ module.exports = {
         if (hasFormWithoutLabels) {
           issues.push({
             file: relativePath,
-            issue: 'Form input\'ları için label eksik',
-            recommendation: 'Tüm form input\'ları için label ekleyin ve for attribute ile input\'a bağlayın.'
+            issue: i18n.t('modules.seo.accessibility.issues.formLabelsMissing'),
+            recommendation: i18n.t('modules.seo.accessibility.recommendations.addFormLabels')
           });
         }
         
@@ -388,8 +388,8 @@ module.exports = {
         if (hasLightColorOnLightBackground || hasDarkColorOnDarkBackground) {
           issues.push({
             file: relativePath,
-            issue: 'Düşük kontrast oranı',
-            recommendation: 'Metin ve arka plan arasında yeterli kontrast oranı sağlayın. WCAG 2.1 AA standardına göre, normal metin için en az 4.5:1, büyük metin için en az 3:1 kontrast oranı olmalıdır.'
+            issue: i18n.t('modules.seo.accessibility.issues.lowContrast'),
+            recommendation: i18n.t('modules.seo.accessibility.recommendations.improveContrast')
           });
         }
         
@@ -405,8 +405,8 @@ module.exports = {
         if (hasClickWithoutKeyboard) {
           issues.push({
             file: relativePath,
-            issue: 'Klavye navigasyonu eksik',
-            recommendation: 'onClick event\'leri için klavye event\'leri de ekleyin. Bu, klavye kullanıcıları için erişilebilirliği artırır.'
+            issue: i18n.t('modules.seo.accessibility.issues.keyboardNavigationMissing'),
+            recommendation: i18n.t('modules.seo.accessibility.recommendations.addKeyboardNavigation')
           });
         }
         
@@ -414,8 +414,8 @@ module.exports = {
         if (content.includes('tabIndex="-1"') || content.includes('tabindex="-1"')) {
           issues.push({
             file: relativePath,
-            issue: 'tabIndex="-1" kullanımı',
-            recommendation: 'tabIndex="-1" kullanımı, elementi klavye navigasyonundan çıkarır. Bu, erişilebilirlik sorunlarına neden olabilir.'
+            issue: i18n.t('modules.seo.accessibility.issues.negativeTabIndex'),
+            recommendation: i18n.t('modules.seo.accessibility.recommendations.avoidNegativeTabIndex')
           });
         }
       } catch (error) {
@@ -428,24 +428,24 @@ module.exports = {
       issues,
       recommendations: [
         {
-          title: 'ARIA Attribute\'leri',
-          description: 'ARIA attribute\'leri, web sayfanızın erişilebilirliğini artırır. Bu attribute\'ler, ekran okuyucuların içeriğinizi daha iyi anlamasını sağlar.'
+          title: i18n.t('modules.seo.accessibility.recommendations.ariaAttributes.title'),
+          description: i18n.t('modules.seo.accessibility.recommendations.ariaAttributes.description')
         },
         {
-          title: 'Form Label\'ları',
-          description: 'Tüm form input\'ları için label ekleyin. Bu, kullanıcıların input\'ların ne için olduğunu anlamasını sağlar.'
+          title: i18n.t('modules.seo.accessibility.recommendations.formLabels.title'),
+          description: i18n.t('modules.seo.accessibility.recommendations.formLabels.description')
         },
         {
-          title: 'Kontrast Oranı',
-          description: 'Metin ve arka plan arasında yeterli kontrast oranı sağlayın. Bu, görme zorluğu olan kullanıcılar için önemlidir.'
+          title: i18n.t('modules.seo.accessibility.recommendations.contrast.title'),
+          description: i18n.t('modules.seo.accessibility.recommendations.contrast.description')
         },
         {
-          title: 'Klavye Navigasyonu',
-          description: 'Tüm interaktif elementlerin klavye ile erişilebilir olduğundan emin olun. Bu, fare kullanamayan kullanıcılar için önemlidir.'
+          title: i18n.t('modules.seo.accessibility.recommendations.keyboardNavigation.title'),
+          description: i18n.t('modules.seo.accessibility.recommendations.keyboardNavigation.description')
         },
         {
-          title: 'Erişilebilirlik Testleri',
-          description: 'Uygulamanızı düzenli olarak erişilebilirlik testlerine tabi tutun. axe, Lighthouse gibi araçlar kullanabilirsiniz.'
+          title: i18n.t('modules.seo.accessibility.recommendations.accessibilityTests.title'),
+          description: i18n.t('modules.seo.accessibility.recommendations.accessibilityTests.description')
         }
       ]
     };
@@ -461,20 +461,20 @@ module.exports = {
      * @returns {string} - Metin formatında görselleştirme
      */
     text(results) {
-      let output = '# SEO Analizi\n\n';
+      let output = `# ${i18n.t('modules.seo.visualize.title')}\n\n`;
       
       // Özet
-      output += '## Özet\n\n';
-      output += `Toplam ${results.metadata.totalIssues} SEO sorunu tespit edildi:\n`;
-      output += `- Meta Tag Sorunları: ${results.metadata.metaTagIssues}\n`;
-      output += `- Semantik HTML Sorunları: ${results.metadata.semanticHtmlIssues}\n`;
-      output += `- Erişilebilirlik Sorunları: ${results.metadata.accessibilityIssues}\n\n`;
+      output += `## ${i18n.t('modules.seo.visualize.summary')}\n\n`;
+      output += `${i18n.t('modules.seo.visualize.totalIssues', { totalIssues: results.metadata.totalIssues })}\n`;
+      output += `- ${i18n.t('modules.seo.visualize.metaTagIssues')}: ${results.metadata.metaTagIssues}\n`;
+      output += `- ${i18n.t('modules.seo.visualize.semanticHtmlIssues')}: ${results.metadata.semanticHtmlIssues}\n`;
+      output += `- ${i18n.t('modules.seo.visualize.accessibilityIssues')}: ${results.metadata.accessibilityIssues}\n\n`;
       
       // Meta Tag Sorunları
-      output += '## Meta Tag Sorunları\n\n';
+      output += `## ${i18n.t('modules.seo.metaTags.title')}\n\n`;
       
       if (results.results.metaTags.issues.length === 0) {
-        output += 'Meta tag sorunu tespit edilmedi. Harika!\n\n';
+        output += `${i18n.t('modules.seo.metaTags.noIssues')}\n\n`;
       } else {
         results.results.metaTags.issues.forEach(issue => {
           output += `- **${issue.file}**\n`;
@@ -483,17 +483,17 @@ module.exports = {
         });
       }
       
-      output += '### Meta Tag Önerileri\n\n';
+      output += `### ${i18n.t('modules.seo.metaTags.recommendations.title')}\n\n`;
       results.results.metaTags.recommendations.forEach(recommendation => {
         output += `- **${recommendation.title}**\n`;
         output += `  - ${recommendation.description}\n\n`;
       });
       
       // Semantik HTML Sorunları
-      output += '## Semantik HTML Sorunları\n\n';
+      output += `## ${i18n.t('modules.seo.semanticHtml.title')}\n\n`;
       
       if (results.results.semanticHtml.issues.length === 0) {
-        output += 'Semantik HTML sorunu tespit edilmedi. Harika!\n\n';
+        output += `${i18n.t('modules.seo.semanticHtml.noIssues')}\n\n`;
       } else {
         results.results.semanticHtml.issues.forEach(issue => {
           output += `- **${issue.file}**\n`;
@@ -502,17 +502,17 @@ module.exports = {
         });
       }
       
-      output += '### Semantik HTML Önerileri\n\n';
+      output += `### ${i18n.t('modules.seo.semanticHtml.recommendations.title')}\n\n`;
       results.results.semanticHtml.recommendations.forEach(recommendation => {
         output += `- **${recommendation.title}**\n`;
         output += `  - ${recommendation.description}\n\n`;
       });
       
       // Erişilebilirlik Sorunları
-      output += '## Erişilebilirlik Sorunları\n\n';
+      output += `## ${i18n.t('modules.seo.accessibility.title')}\n\n`;
       
       if (results.results.accessibility.issues.length === 0) {
-        output += 'Erişilebilirlik sorunu tespit edilmedi. Harika!\n\n';
+        output += `${i18n.t('modules.seo.accessibility.noIssues')}\n\n`;
       } else {
         results.results.accessibility.issues.forEach(issue => {
           output += `- **${issue.file}**\n`;
@@ -521,7 +521,7 @@ module.exports = {
         });
       }
       
-      output += '### Erişilebilirlik Önerileri\n\n';
+      output += `### ${i18n.t('modules.seo.accessibility.recommendations.title')}\n\n`;
       results.results.accessibility.recommendations.forEach(recommendation => {
         output += `- **${recommendation.title}**\n`;
         output += `  - ${recommendation.description}\n\n`;
@@ -538,34 +538,34 @@ module.exports = {
     html(results) {
       let html = `
 <div class="seo-container">
-  <h2>SEO Analizi</h2>
+  <h2>${i18n.t('modules.seo.visualize.title')}</h2>
   
   <!-- Özet -->
   <div class="section">
-    <h3>Özet</h3>
+    <h3>${i18n.t('modules.seo.visualize.summary')}</h3>
     <div class="summary">
-      <p>Toplam <strong>${results.metadata.totalIssues}</strong> SEO sorunu tespit edildi:</p>
+      <p>${i18n.t('modules.seo.visualize.totalIssues', { totalIssues: `<strong>${results.metadata.totalIssues}</strong>` })}</p>
       <ul class="summary-list">
-        <li>Meta Tag Sorunları: ${results.metadata.metaTagIssues}</li>
-        <li>Semantik HTML Sorunları: ${results.metadata.semanticHtmlIssues}</li>
-        <li>Erişilebilirlik Sorunları: ${results.metadata.accessibilityIssues}</li>
+        <li>${i18n.t('modules.seo.visualize.metaTagIssues')}: ${results.metadata.metaTagIssues}</li>
+        <li>${i18n.t('modules.seo.visualize.semanticHtmlIssues')}: ${results.metadata.semanticHtmlIssues}</li>
+        <li>${i18n.t('modules.seo.visualize.accessibilityIssues')}: ${results.metadata.accessibilityIssues}</li>
       </ul>
     </div>
   </div>
   
   <!-- Meta Tag Sorunları -->
   <div class="section">
-    <h3>Meta Tag Sorunları</h3>`;
+    <h3>${i18n.t('modules.seo.metaTags.title')}</h3>`;
       
       if (results.results.metaTags.issues.length === 0) {
         html += `
     <div class="success-message">
-      <p>✅ Meta tag sorunu tespit edilmedi. Harika!</p>
+      <p>✅ ${i18n.t('modules.seo.metaTags.noIssues')}</p>
     </div>`;
       } else {
         html += `
     <div class="subsection">
-      <h4>Tespit Edilen Sorunlar</h4>
+      <h4>${i18n.t('modules.seo.visualize.detectedIssues')}</h4>
       <ul class="issue-list">`;
         
         results.results.metaTags.issues.forEach(issue => {
@@ -584,7 +584,7 @@ module.exports = {
       
       html += `
     <div class="subsection">
-      <h4>Meta Tag Önerileri</h4>
+      <h4>${i18n.t('modules.seo.metaTags.recommendations.title')}</h4>
       <ul class="recommendation-list">`;
       
       results.results.metaTags.recommendations.forEach(recommendation => {
@@ -602,17 +602,17 @@ module.exports = {
   
   <!-- Semantik HTML Sorunları -->
   <div class="section">
-    <h3>Semantik HTML Sorunları</h3>`;
+    <h3>${i18n.t('modules.seo.semanticHtml.title')}</h3>`;
       
       if (results.results.semanticHtml.issues.length === 0) {
         html += `
     <div class="success-message">
-      <p>✅ Semantik HTML sorunu tespit edilmedi. Harika!</p>
+      <p>✅ ${i18n.t('modules.seo.semanticHtml.noIssues')}</p>
     </div>`;
       } else {
         html += `
     <div class="subsection">
-      <h4>Tespit Edilen Sorunlar</h4>
+      <h4>${i18n.t('modules.seo.visualize.detectedIssues')}</h4>
       <ul class="issue-list">`;
         
         results.results.semanticHtml.issues.forEach(issue => {
@@ -631,7 +631,7 @@ module.exports = {
       
       html += `
     <div class="subsection">
-      <h4>Semantik HTML Önerileri</h4>
+      <h4>${i18n.t('modules.seo.semanticHtml.recommendations.title')}</h4>
       <ul class="recommendation-list">`;
       
       results.results.semanticHtml.recommendations.forEach(recommendation => {
@@ -649,17 +649,17 @@ module.exports = {
   
   <!-- Erişilebilirlik Sorunları -->
   <div class="section">
-    <h3>Erişilebilirlik Sorunları</h3>`;
+    <h3>${i18n.t('modules.seo.accessibility.title')}</h3>`;
       
       if (results.results.accessibility.issues.length === 0) {
         html += `
     <div class="success-message">
-      <p>✅ Erişilebilirlik sorunu tespit edilmedi. Harika!</p>
+      <p>✅ ${i18n.t('modules.seo.accessibility.noIssues')}</p>
     </div>`;
       } else {
         html += `
     <div class="subsection">
-      <h4>Tespit Edilen Sorunlar</h4>
+      <h4>${i18n.t('modules.seo.visualize.detectedIssues')}</h4>
       <ul class="issue-list">`;
         
         results.results.accessibility.issues.forEach(issue => {
@@ -678,7 +678,7 @@ module.exports = {
       
       html += `
     <div class="subsection">
-      <h4>Erişilebilirlik Önerileri</h4>
+      <h4>${i18n.t('modules.seo.accessibility.recommendations.title')}</h4>
       <ul class="recommendation-list">`;
       
       results.results.accessibility.recommendations.forEach(recommendation => {

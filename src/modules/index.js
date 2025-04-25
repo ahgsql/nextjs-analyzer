@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { logError } = require('../utils');
+const { logError, i18n } = require('../utils');
 
 /**
  * Modül yöneticisi sınıfı
@@ -29,7 +29,7 @@ class ModuleManager {
           this.modules.set(module.name, module);
         }
       } catch (error) {
-        logError(`${folder} modülü yüklenirken hata oluştu:`, error);
+        logError(i18n.t('analyzer.messages.unexpectedError'), error);
       }
     }
   }
@@ -61,7 +61,7 @@ class ModuleManager {
   async runAnalysis(moduleName, analyzer, options) {
     const module = this.getModule(moduleName);
     if (!module) {
-      throw new Error(`${moduleName} modülü bulunamadı`);
+      throw new Error(`${moduleName} ${i18n.t('analyzer.messages.analysisFailed')}`);
     }
     
     const results = await module.analyze(analyzer, options);
@@ -83,7 +83,7 @@ class ModuleManager {
         results[name] = await module.analyze(analyzer, options);
         analyzer.addModuleResults(name, results[name]);
       } catch (error) {
-        logError(`${name} modülü çalıştırılırken hata oluştu:`, error);
+        logError(`${name} ${i18n.t('analyzer.messages.unexpectedError')}`, error);
         results[name] = { error: error.message };
       }
     }
@@ -102,11 +102,11 @@ class ModuleManager {
   visualizeResults(moduleName, format, results, analyzer) {
     const module = this.getModule(moduleName);
     if (!module) {
-      throw new Error(`${moduleName} modülü bulunamadı`);
+      throw new Error(`${moduleName} ${i18n.t('analyzer.messages.analysisFailed')}`);
     }
     
     if (!module.visualize || !module.visualize[format]) {
-      throw new Error(`${moduleName} modülü ${format} formatında görselleştirme desteklemiyor`);
+      throw new Error(`${moduleName} ${i18n.t('analyzer.messages.analysisFailed')}`);
     }
     
     return module.visualize[format](results, analyzer);

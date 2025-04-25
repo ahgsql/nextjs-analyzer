@@ -1,14 +1,14 @@
 const fs = require('fs-extra');
 const path = require('path');
 const { execSync } = require('child_process');
-const { logError, logInfo } = require('../../utils');
+const { logError, logInfo, i18n } = require('../../utils');
 
 /**
  * Zaman İçinde Değişim Analizi Modülü
  */
 module.exports = {
-  name: 'history',
-  description: 'Next.js projelerinin zaman içindeki değişimlerini analiz eder',
+  name: i18n.t('modules.history.name'),
+  description: i18n.t('modules.history.description'),
   
   /**
    * Analiz işlemini gerçekleştirir
@@ -23,7 +23,7 @@ module.exports = {
     if (!hasGit) {
       return {
         results: {
-          error: 'Git deposu bulunamadı. Tarihsel analiz için Git gereklidir.'
+          error: i18n.t('modules.history.error.noGit')
         },
         metadata: {
           hasGit: false
@@ -376,10 +376,10 @@ module.exports = {
      */
     text(results) {
       if (results.results.error) {
-        return `# Zaman İçinde Değişim Analizi\n\nHata: ${results.results.error}\n`;
+        return `# ${i18n.t('modules.history.visualize.title')}\n\nHata: ${results.results.error}\n`;
       }
       
-      let output = '# Zaman İçinde Değişim Analizi\n\n';
+      let output = `# ${i18n.t('modules.history.visualize.title')}\n\n`;
       
       // Özet
       output += '## Özet\n\n';
@@ -453,7 +453,7 @@ module.exports = {
       if (results.results.error) {
         return `
 <div class="history-container">
-  <h2>Zaman İçinde Değişim Analizi</h2>
+  <h2>${i18n.t('modules.history.visualize.title')}</h2>
   <div class="error-message">
     <p>Hata: ${results.results.error}</p>
   </div>
@@ -497,7 +497,7 @@ module.exports = {
       // HTML oluştur
       let html = `
 <div class="history-container">
-  <h2>Zaman İçinde Değişim Analizi</h2>
+  <h2>${i18n.t('modules.history.visualize.title')}</h2>
   
   <!-- Özet -->
   <div class="section">
@@ -797,16 +797,7 @@ module.exports = {
      * @returns {string} - Trend adı
      */
     getTrendName(trend) {
-      const names = {
-        'rapid-growth': 'Hızlı Büyüme',
-        'steady-growth': 'Düzenli Büyüme',
-        'stable': 'Stabil',
-        'steady-decline': 'Düzenli Azalma',
-        'rapid-decline': 'Hızlı Azalma',
-        'unknown': 'Bilinmiyor'
-      };
-      
-      return names[trend] || 'Bilinmiyor';
+      return i18n.t(`modules.history.trends.${trend}`);
     }
   }
 };

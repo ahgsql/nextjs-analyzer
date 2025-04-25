@@ -4,7 +4,7 @@ const inquirer = require('inquirer');
 const NextJsAnalyzer = require('../core/analyzer');
 const moduleManager = require('../modules');
 const visualizer = require('../visualizers');
-const { logInfo, logSuccess, logError } = require('../utils');
+const { logInfo, logSuccess, logError, i18n, settings } = require('../utils');
 
 /**
  * Komut satırı komutlarını ayarlar
@@ -13,18 +13,18 @@ const { logInfo, logSuccess, logError } = require('../utils');
 function setupCommands() {
   // Ana komut
   program
-    .name('nextjs-analyzer')
-    .description('Next.js projelerini analiz eden modüler araç')
+    .name(i18n.t('cli.name'))
+    .description(i18n.t('cli.description'))
     .version('2.1.0');
   
   // Tüm modülleri çalıştır
   program
     .command('analyze')
-    .description('Tüm analiz modüllerini çalıştır')
-    .option('-p, --path <path>', 'Analiz edilecek Next.js projesinin yolu', process.cwd())
-    .option('-o, --output <output>', 'Analiz sonuçlarının kaydedileceği dosya yolu', 'nextjs-analysis')
-    .option('-f, --format <format>', 'Çıktı formatı (text, json veya html)', 'text')
-    .option('-v, --verbose', 'Detaylı çıktı göster', false)
+    .description(i18n.t('cli.commands.analyze.description'))
+    .option('-p, --path <path>', i18n.t('cli.commands.analyze.options.path'), process.cwd())
+    .option('-o, --output <output>', i18n.t('cli.commands.analyze.options.output'), 'nextjs-analysis')
+    .option('-f, --format <format>', i18n.t('cli.commands.analyze.options.format'), 'text')
+    .option('-v, --verbose', i18n.t('cli.commands.analyze.options.verbose'), false)
     .action(async (options) => {
       try {
         // Analiz işlemini başlat
@@ -32,7 +32,7 @@ function setupCommands() {
         const success = await analyzer.analyze();
         
         if (!success) {
-          logError('Analiz tamamlanamadı.');
+          logError(i18n.t('analyzer.messages.analysisFailed'));
           process.exit(1);
         }
         
@@ -45,15 +45,15 @@ function setupCommands() {
         
         // Tüm modüller seçeneği ekle
         moduleChoices.unshift({
-          name: 'Tüm modüller: Tüm analiz modüllerini çalıştır',
+          name: i18n.t('cli.commands.analyze.messages.allModules'),
           value: 'all'
         });
         
         // Format seçimi için interaktif menü
         const formatChoices = [
-          { name: 'Metin (text)', value: 'text' },
-          { name: 'HTML', value: 'html' },
-          { name: 'JSON', value: 'json' }
+          { name: i18n.t('cli.formats.text'), value: 'text' },
+          { name: i18n.t('cli.formats.html'), value: 'html' },
+          { name: i18n.t('cli.formats.json'), value: 'json' }
         ];
         
         // Kullanıcıdan seçim yapmasını iste
@@ -61,27 +61,27 @@ function setupCommands() {
           {
             type: 'list',
             name: 'module',
-            message: 'Hangi modülü çalıştırmak istiyorsunuz?',
+            message: i18n.t('cli.commands.analyze.messages.moduleSelection'),
             choices: moduleChoices
           },
           {
             type: 'list',
             name: 'format',
-            message: 'Hangi formatta çıktı almak istiyorsunuz?',
+            message: i18n.t('cli.commands.analyze.messages.formatSelection'),
             choices: formatChoices,
             default: options.format
           }
         ]);
         
         // Seçilen modülü çalıştır
-        logInfo('Modüller çalıştırılıyor...');
+        logInfo(i18n.t('cli.commands.analyze.messages.runningModules'));
         let results;
         
         if (answers.module === 'all') {
           results = await moduleManager.runAllAnalyses(analyzer, { ...options, format: answers.format });
           
           // Sonuçları görselleştir
-          logInfo('Sonuçlar görselleştiriliyor...');
+          logInfo(i18n.t('cli.commands.analyze.messages.visualizing'));
           const output = visualizer.visualizeAll(answers.format, results, analyzer);
           
           // Sonuçları dosyaya kaydet
@@ -98,9 +98,9 @@ function setupCommands() {
           visualizer.saveToFile(outputFile, answers.format, output);
         }
         
-        logSuccess('Analiz tamamlandı.');
+        logSuccess(i18n.t('cli.commands.analyze.messages.completed'));
       } catch (error) {
-        logError('Beklenmeyen bir hata oluştu:', error);
+        logError(i18n.t('analyzer.messages.unexpectedError'), error);
         process.exit(1);
       }
     });
@@ -147,14 +147,49 @@ function setupCommands() {
   // Modül listesi komutu
   program
     .command('list-modules')
-    .description('Kullanılabilir analiz modüllerini listeler')
+    .description(i18n.t('cli.commands.listModules.description'))
     .action(() => {
       const modules = moduleManager.getAllModules();
       
-      logInfo('Kullanılabilir Analiz Modülleri:');
+      logInfo(i18n.t('cli.commands.listModules.messages.availableModules'));
       modules.forEach(module => {
         console.log(`- ${module.name}: ${module.description}`);
       });
+    });
+  
+  // Ayarlar komutu
+  program
+    .command('settings')
+    .description(i18n.t('cli.commands.settings.description'))
+    .action(async () => {
+      try {
+        // Dil seçimi için interaktif menü
+        const languages = i18n.getAvailableLanguages();
+        const languageChoices = Object.entries(languages).map(([code, name]) => ({
+          name,
+          value: code
+        }));
+        
+        // Kullanıcıdan dil seçimi yapmasını iste
+        const answers = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'language',
+            message: i18n.t('cli.commands.settings.messages.languageSelection'),
+            choices: languageChoices,
+            default: i18n.getCurrentLanguage()
+          }
+        ]);
+        
+        // Dili değiştir
+        if (i18n.setLanguage(answers.language)) {
+          logSuccess(i18n.t('cli.commands.settings.messages.languageChanged', { language: languages[answers.language] }));
+          logSuccess(i18n.t('cli.commands.settings.messages.settingsSaved'));
+        }
+      } catch (error) {
+        logError(i18n.t('analyzer.messages.unexpectedError'), error);
+        process.exit(1);
+      }
     });
   
   return program;

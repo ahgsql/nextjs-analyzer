@@ -1,13 +1,13 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { logSuccess, logError } = require('../../utils');
+const { logSuccess, logError, i18n } = require('../../utils');
 
 /**
  * Gelişmiş Görselleştirme Modülü
  */
 module.exports = {
-  name: 'visualization',
-  description: 'Next.js analiz sonuçlarını gelişmiş görselleştirmelerle sunar',
+  name: i18n.t('modules.visualization.name'),
+  description: i18n.t('modules.visualization.description'),
   
   /**
    * Analiz işlemini gerçekleştirir
@@ -338,14 +338,14 @@ module.exports = {
      * @returns {string} - Metin formatında görselleştirme
      */
     text(results) {
-      let output = '# Gelişmiş Görselleştirme\n\n';
+      let output = `# ${i18n.t('modules.visualization.visualize.title')}\n\n`;
       
       // Özet
-      output += '## Özet\n\n';
-      output += `Toplam ${results.metadata.totalModules} modül ve ${results.metadata.totalIssues} sorun tespit edildi.\n\n`;
+      output += `## ${i18n.t('modules.visualization.visualize.summary')}\n\n`;
+      output += `${i18n.t('modules.visualization.summary.totalModules', { totalModules: results.metadata.totalModules })} ve ${i18n.t('modules.visualization.summary.totalIssues', { totalIssues: results.metadata.totalIssues })}\n\n`;
       
       // Modül başına sorun sayıları
-      output += '## Modül Başına Sorun Sayıları\n\n';
+      output += `## ${i18n.t('modules.visualization.visualize.moduleIssues')}\n\n`;
       
       for (const [moduleName, issueCount] of Object.entries(results.results.chartData.issueCountsByModule)) {
         output += `- ${moduleName}: ${issueCount} sorun\n`;
@@ -354,17 +354,18 @@ module.exports = {
       output += '\n';
       
       // Sorun türü dağılımı
-      output += '## Sorun Türü Dağılımı\n\n';
+      output += `## ${i18n.t('modules.visualization.visualize.issueTypeDistribution')}\n\n`;
       
       for (const [issueType, count] of Object.entries(results.results.chartData.issueTypeDistribution)) {
-        output += `- ${issueType}: ${count} sorun\n`;
+        const translatedIssueType = i18n.t(`modules.visualization.issueTypes.${issueType.toLowerCase().replace(/\s+/g, '')}`, { defaultValue: issueType });
+        output += `- ${translatedIssueType}: ${count} sorun\n`;
       }
       
       output += '\n';
       
       // Önem derecesi dağılımı
       if (Object.keys(results.results.chartData.severityDistribution).length > 0) {
-        output += '## Önem Derecesi Dağılımı\n\n';
+        output += `## ${i18n.t('modules.visualization.visualize.severityDistribution')}\n\n`;
         
         for (const [severity, count] of Object.entries(results.results.chartData.severityDistribution)) {
           output += `- ${severity}: ${count} sorun\n`;
@@ -374,32 +375,33 @@ module.exports = {
       }
       
       // Filtreleme seçenekleri
-      output += '## Filtreleme Seçenekleri\n\n';
+      output += `## ${i18n.t('modules.visualization.visualize.filterOptions')}\n\n`;
       
-      output += '### Modüller\n\n';
+      output += `### ${i18n.t('modules.visualization.visualize.modules')}\n\n`;
       results.results.filterOptions.modules.forEach(module => {
         output += `- ${module}\n`;
       });
       
-      output += '\n### Sorun Türleri\n\n';
+      output += `\n### ${i18n.t('modules.visualization.visualize.issueTypes')}\n\n`;
       results.results.filterOptions.issueTypes.forEach(issueType => {
-        output += `- ${issueType}\n`;
+        const translatedIssueType = i18n.t(`modules.visualization.issueTypes.${issueType.toLowerCase().replace(/\s+/g, '')}`, { defaultValue: issueType });
+        output += `- ${translatedIssueType}\n`;
       });
       
       if (results.results.filterOptions.severities.length > 0) {
-        output += '\n### Önem Dereceleri\n\n';
+        output += `\n### ${i18n.t('modules.visualization.visualize.severities')}\n\n`;
         results.results.filterOptions.severities.forEach(severity => {
           output += `- ${severity}\n`;
         });
       }
       
-      output += '\n### Dosyalar\n\n';
+      output += `\n### ${i18n.t('modules.visualization.visualize.files')}\n\n`;
       results.results.filterOptions.files.slice(0, 10).forEach(file => {
         output += `- ${file}\n`;
       });
       
       if (results.results.filterOptions.files.length > 10) {
-        output += `- ... ve ${results.results.filterOptions.files.length - 10} dosya daha\n`;
+        output += `- ${i18n.t('modules.visualization.visualize.andMore', { count: results.results.filterOptions.files.length - 10 })}\n`;
       }
       
       return output;
@@ -465,13 +467,13 @@ module.exports = {
       // HTML oluştur
       let html = `
 <div class="visualization-container">
-  <h2>Gelişmiş Görselleştirme</h2>
+  <h2>${i18n.t('modules.visualization.visualize.title')}</h2>
   
   <!-- Özet -->
   <div class="section">
-    <h3>Özet</h3>
+    <h3>${i18n.t('modules.visualization.visualize.summary')}</h3>
     <div class="summary">
-      <p>Toplam <strong>${results.metadata.totalModules}</strong> modül ve <strong>${results.metadata.totalIssues}</strong> sorun tespit edildi.</p>
+      <p>${i18n.t('modules.visualization.summary.totalModules', { totalModules: `<strong>${results.metadata.totalModules}</strong>` })} ve ${i18n.t('modules.visualization.summary.totalIssues', { totalIssues: `<strong>${results.metadata.totalIssues}</strong>` })}</p>
     </div>
   </div>
   
@@ -480,14 +482,14 @@ module.exports = {
     <h3>Grafikler</h3>
     
     <div class="chart-container">
-      <h4>Modül Başına Sorun Sayıları</h4>
+      <h4>${i18n.t('modules.visualization.charts.moduleIssues.title')}</h4>
       <div class="chart">
         <canvas id="moduleChart"></canvas>
       </div>
     </div>
     
     <div class="chart-container">
-      <h4>Sorun Türü Dağılımı</h4>
+      <h4>${i18n.t('modules.visualization.charts.issueTypes.title')}</h4>
       <div class="chart">
         <canvas id="issueTypeChart"></canvas>
       </div>
@@ -496,7 +498,7 @@ module.exports = {
       if (severities.length > 0) {
         html += `
     <div class="chart-container">
-      <h4>Önem Derecesi Dağılımı</h4>
+      <h4>${i18n.t('modules.visualization.charts.severityDistribution.title')}</h4>
       <div class="chart">
         <canvas id="severityChart"></canvas>
       </div>
@@ -508,11 +510,11 @@ module.exports = {
   
   <!-- Filtreleme -->
   <div class="section">
-    <h3>Filtreleme</h3>
+    <h3>${i18n.t('modules.visualization.filtering.title')}</h3>
     
     <div class="filter-container">
       <div class="filter-group">
-        <label for="moduleFilter">Modül:</label>
+        <label for="moduleFilter">${i18n.t('modules.visualization.filtering.module')}</label>
         <select id="moduleFilter" class="filter-select">
           <option value="all">Tümü</option>`;
       
@@ -526,7 +528,7 @@ module.exports = {
       </div>
       
       <div class="filter-group">
-        <label for="issueTypeFilter">Sorun Türü:</label>
+        <label for="issueTypeFilter">${i18n.t('modules.visualization.filtering.issueType')}</label>
         <select id="issueTypeFilter" class="filter-select">
           <option value="all">Tümü</option>`;
       
@@ -542,7 +544,7 @@ module.exports = {
       if (results.results.filterOptions.severities.length > 0) {
         html += `
       <div class="filter-group">
-        <label for="severityFilter">Önem Derecesi:</label>
+        <label for="severityFilter">${i18n.t('modules.visualization.filtering.severity')}</label>
         <select id="severityFilter" class="filter-select">
           <option value="all">Tümü</option>`;
         
@@ -558,7 +560,7 @@ module.exports = {
       
       html += `
       <div class="filter-group">
-        <label for="fileFilter">Dosya:</label>
+        <label for="fileFilter">${i18n.t('modules.visualization.filtering.file')}</label>
         <select id="fileFilter" class="filter-select">
           <option value="all">Tümü</option>`;
       
@@ -571,11 +573,11 @@ module.exports = {
         </select>
       </div>
       
-      <button id="applyFilter" class="filter-button">Filtrele</button>
+      <button id="applyFilter" class="filter-button">${i18n.t('modules.visualization.filtering.applyFilter')}</button>
     </div>
     
     <div id="filteredResults" class="filtered-results">
-      <p>Filtreleme yapmak için yukarıdaki seçenekleri kullanın.</p>
+      <p>${i18n.t('modules.visualization.filtering.instructions')}</p>
     </div>
   </div>
   
@@ -654,6 +656,9 @@ module.exports = {
       const fileFilter = document.getElementById('fileFilter').value;
       
       const filteredResults = document.getElementById('filteredResults');
+      // i18n.t() fonksiyonu doğrudan JavaScript içinde kullanılamaz
+      // Çünkü i18n modülü sadece Node.js tarafında çalışır, tarayıcıda değil
+      // Bu nedenle, bu değeri önceden HTML içinde gömmeliyiz
       filteredResults.innerHTML = '<p>Filtreleme sonuçları yükleniyor...</p>';
       
       // Gerçek uygulamada burada AJAX isteği yapılabilir

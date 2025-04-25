@@ -1,13 +1,13 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { findFiles, getRelativePath } = require('../../utils');
+const { findFiles, getRelativePath, i18n } = require('../../utils');
 
 /**
  * Güvenlik Analizi Modülü
  */
 module.exports = {
-  name: 'security',
-  description: 'Next.js projelerinde güvenlik analizi yapar',
+  name: i18n.t('modules.security.name'),
+  description: i18n.t('modules.security.description'),
   
   /**
    * Analiz işlemini gerçekleştirir
@@ -82,9 +82,9 @@ module.exports = {
           if (envVars.some(v => v.includes('SECRET') || v.includes('KEY') || v.includes('TOKEN') || v.includes('PASSWORD'))) {
             issues.push({
               file: relativePath,
-              issue: 'Hassas çevresel değişkenler doğrudan server component\'te kullanılıyor',
+              issue: i18n.t('modules.security.serverComponent.issues.sensitiveEnvVars'),
               severity: 'high',
-              recommendation: 'Hassas bilgileri içeren çevresel değişkenleri doğrudan client\'a göndermekten kaçının. Bunun yerine, API route\'lar kullanarak bu bilgileri güvenli bir şekilde işleyin.'
+              recommendation: i18n.t('modules.security.serverComponent.recommendations.sensitiveEnvVars')
             });
           }
         }
@@ -94,9 +94,9 @@ module.exports = {
             (content.includes('${') || content.includes("${") || content.includes('`') || content.includes("'"))) {
           issues.push({
             file: relativePath,
-            issue: 'Olası SQL injection riski',
+            issue: i18n.t('modules.security.serverComponent.issues.sqlInjection'),
             severity: 'critical',
-            recommendation: 'SQL sorgularında kullanıcı girdilerini doğrudan kullanmak yerine, parametreli sorgular veya ORM kullanın.'
+            recommendation: i18n.t('modules.security.serverComponent.recommendations.sqlInjection')
           });
         }
         
@@ -105,9 +105,9 @@ module.exports = {
             (content.includes('req.') || content.includes('params.') || content.includes('query.'))) {
           issues.push({
             file: relativePath,
-            issue: 'Kullanıcı girdisi ile dosya sistemi erişimi',
+            issue: i18n.t('modules.security.serverComponent.issues.fileSystemAccess'),
             severity: 'critical',
-            recommendation: 'Kullanıcı girdilerini dosya yollarında kullanmak tehlikelidir. Girdileri doğrulayın ve güvenli hale getirin.'
+            recommendation: i18n.t('modules.security.serverComponent.recommendations.fileSystemAccess')
           });
         }
         
@@ -115,9 +115,9 @@ module.exports = {
         if (content.includes('eval(') || content.includes('new Function(')) {
           issues.push({
             file: relativePath,
-            issue: 'eval() veya new Function() kullanımı',
+            issue: i18n.t('modules.security.serverComponent.issues.evalUsage'),
             severity: 'critical',
-            recommendation: 'eval() ve new Function() kullanımından kaçının, çünkü bunlar kod enjeksiyonu saldırılarına açıktır.'
+            recommendation: i18n.t('modules.security.serverComponent.recommendations.evalUsage')
           });
         }
       } catch (error) {
@@ -130,16 +130,16 @@ module.exports = {
       issues,
       recommendations: [
         {
-          title: 'Server Component Güvenliği',
-          description: 'Server component\'ler, hassas bilgileri içerebilir. Bu bilgilerin client\'a sızdırılmamasına dikkat edin.'
+          title: i18n.t('modules.security.serverComponent.recommendations.title'),
+          description: i18n.t('modules.security.serverComponent.recommendations.description')
         },
         {
-          title: 'Çevresel Değişkenler',
-          description: 'Server component\'lerde kullanılan çevresel değişkenler, client bundle\'a dahil edilmez. Ancak, bu değişkenleri doğrudan JSX içinde kullanmak, bu bilgilerin client\'a sızmasına neden olabilir.'
+          title: i18n.t('modules.security.serverComponent.recommendations.envVars.title'),
+          description: i18n.t('modules.security.serverComponent.recommendations.envVars.description')
         },
         {
-          title: 'Veri Doğrulama',
-          description: 'Server component\'lerde kullanıcı girdilerini her zaman doğrulayın ve temizleyin.'
+          title: i18n.t('modules.security.serverComponent.recommendations.dataValidation.title'),
+          description: i18n.t('modules.security.serverComponent.recommendations.dataValidation.description')
         }
       ]
     };
@@ -181,9 +181,9 @@ module.exports = {
             !content.includes('next-cors')) {
           issues.push({
             file: relativePath,
-            issue: 'CORS yapılandırması eksik',
+            issue: i18n.t('modules.security.apiRoute.issues.corsConfig'),
             severity: 'medium',
-            recommendation: 'API route\'larda CORS yapılandırması ekleyin. next-cors veya manuel olarak Access-Control-Allow-Origin header\'ı ekleyin.'
+            recommendation: i18n.t('modules.security.apiRoute.recommendations.corsConfig')
           });
         } else if (content.includes('Access-Control-Allow-Origin: *') || 
                   content.includes("Access-Control-Allow-Origin', '*'") || 
@@ -191,9 +191,9 @@ module.exports = {
                   content.includes("origin: '*'")) {
           issues.push({
             file: relativePath,
-            issue: 'CORS yapılandırması çok geniş (wildcard *)',
+            issue: i18n.t('modules.security.apiRoute.issues.corsWildcard'),
             severity: 'medium',
-            recommendation: 'Wildcard (*) yerine, belirli domain\'lere izin verin.'
+            recommendation: i18n.t('modules.security.apiRoute.recommendations.corsWildcard')
           });
         }
         
@@ -204,9 +204,9 @@ module.exports = {
             !content.includes('limiter')) {
           issues.push({
             file: relativePath,
-            issue: 'Rate limiting eksik',
+            issue: i18n.t('modules.security.apiRoute.issues.rateLimiting'),
             severity: 'medium',
-            recommendation: 'API route\'larda rate limiting ekleyin. express-rate-limit veya benzer bir kütüphane kullanabilirsiniz.'
+            recommendation: i18n.t('modules.security.apiRoute.recommendations.rateLimiting')
           });
         }
         
@@ -217,9 +217,9 @@ module.exports = {
              !content.includes('jwt') && !content.includes('cookie'))) {
           issues.push({
             file: relativePath,
-            issue: 'Veri değiştiren API endpoint\'inde authentication kontrolü eksik',
+            issue: i18n.t('modules.security.apiRoute.issues.authentication'),
             severity: 'high',
-            recommendation: 'Veri değiştiren API endpoint\'lerinde authentication kontrolü ekleyin.'
+            recommendation: i18n.t('modules.security.apiRoute.recommendations.authentication')
           });
         }
         
@@ -229,9 +229,9 @@ module.exports = {
              !content.includes('yup') && !content.includes('zod'))) {
           issues.push({
             file: relativePath,
-            issue: 'Input validation eksik',
+            issue: i18n.t('modules.security.apiRoute.issues.inputValidation'),
             severity: 'high',
-            recommendation: 'API route\'larda input validation ekleyin. Joi, Yup, Zod gibi kütüphaneler kullanabilirsiniz.'
+            recommendation: i18n.t('modules.security.apiRoute.recommendations.inputValidation')
           });
         }
         
@@ -239,9 +239,9 @@ module.exports = {
         if (!content.includes('req.method') && !content.includes('request.method')) {
           issues.push({
             file: relativePath,
-            issue: 'HTTP method kontrolü eksik',
+            issue: i18n.t('modules.security.apiRoute.issues.httpMethod'),
             severity: 'medium',
-            recommendation: 'API route\'larda HTTP method kontrolü ekleyin. Örneğin: if (req.method !== "POST") { return res.status(405).end(); }'
+            recommendation: i18n.t('modules.security.apiRoute.recommendations.httpMethod')
           });
         }
       } catch (error) {
@@ -254,24 +254,24 @@ module.exports = {
       issues,
       recommendations: [
         {
-          title: 'API Route Güvenliği',
-          description: 'API route\'lar, uygulamanızın dış dünyaya açılan kapılarıdır. Bu nedenle, güvenlik önlemlerini dikkatli bir şekilde uygulamalısınız.'
+          title: i18n.t('modules.security.apiRoute.recommendations.title'),
+          description: i18n.t('modules.security.apiRoute.recommendations.description')
         },
         {
-          title: 'CORS Yapılandırması',
-          description: 'CORS yapılandırması, API\'nize hangi domain\'lerden erişilebileceğini kontrol eder. Wildcard (*) kullanmak yerine, belirli domain\'lere izin verin.'
+          title: i18n.t('modules.security.apiRoute.recommendations.cors.title'),
+          description: i18n.t('modules.security.apiRoute.recommendations.cors.description')
         },
         {
-          title: 'Rate Limiting',
-          description: 'Rate limiting, API\'nize yapılan istekleri sınırlar ve DDoS saldırılarına karşı koruma sağlar.'
+          title: i18n.t('modules.security.apiRoute.recommendations.rateLimiting.title'),
+          description: i18n.t('modules.security.apiRoute.recommendations.rateLimiting.description')
         },
         {
-          title: 'Authentication ve Authorization',
-          description: 'Veri değiştiren API endpoint\'lerinde her zaman authentication ve authorization kontrolü yapın.'
+          title: i18n.t('modules.security.apiRoute.recommendations.auth.title'),
+          description: i18n.t('modules.security.apiRoute.recommendations.auth.description')
         },
         {
-          title: 'Input Validation',
-          description: 'Kullanıcı girdilerini her zaman doğrulayın ve temizleyin. Bu, injection saldırılarına karşı koruma sağlar.'
+          title: i18n.t('modules.security.apiRoute.recommendations.inputValidation.title'),
+          description: i18n.t('modules.security.apiRoute.recommendations.inputValidation.description')
         }
       ]
     };
@@ -301,9 +301,9 @@ module.exports = {
           if (majorVersion < 12) {
             issues.push({
               file: 'package.json',
-              issue: `Eski Next.js sürümü kullanılıyor (${dependencies.next})`,
+              issue: i18n.t('modules.security.general.issues.oldNextVersion', { version: dependencies.next }),
               severity: 'high',
-              recommendation: 'Güvenlik güncellemeleri için Next.js\'i en son sürüme yükseltin.'
+              recommendation: i18n.t('modules.security.general.recommendations.oldNextVersion')
             });
           }
         }
@@ -336,9 +336,9 @@ module.exports = {
             if (isVulnerable) {
               issues.push({
                 file: 'package.json',
-                issue: `Güvenlik açığı olan paket: ${pkg}@${version}`,
+                issue: i18n.t('modules.security.general.issues.insecurePackage', { package: pkg, version: version }),
                 severity: info.severity,
-                recommendation: `${pkg} paketini en az ${info.maxVersion} sürümüne yükseltin.`
+                recommendation: i18n.t('modules.security.general.recommendations.insecurePackage', { package: pkg, minVersion: info.maxVersion })
               });
             }
           }
@@ -370,9 +370,9 @@ module.exports = {
           if (!isIgnored && envFile !== '.env.example' && envFile !== '.env.sample') {
             issues.push({
               file: envFile,
-              issue: `${envFile} dosyası .gitignore'da değil`,
+              issue: i18n.t('modules.security.general.issues.envNotIgnored', { file: envFile }),
               severity: 'critical',
-              recommendation: `${envFile} dosyasını .gitignore'a ekleyin. Hassas bilgiler repository'de saklanmamalıdır.`
+              recommendation: i18n.t('modules.security.general.recommendations.envNotIgnored', { file: envFile })
             });
           }
           
@@ -386,9 +386,9 @@ module.exports = {
               if (key && value && sensitiveKeys.some(sk => key.includes(sk))) {
                 issues.push({
                   file: envFile,
-                  issue: `Hassas bilgi içeren çevresel değişken: ${key}`,
+                  issue: i18n.t('modules.security.general.issues.sensitiveEnvVar', { key: key }),
                   severity: 'medium',
-                  recommendation: `${envFile} dosyasını .gitignore'a ekleyin ve hassas bilgileri güvenli bir şekilde yönetin.`
+                  recommendation: i18n.t('modules.security.general.recommendations.sensitiveEnvVar', { file: envFile })
                 });
               }
             }
@@ -409,9 +409,9 @@ module.exports = {
         if (!content.includes('Content-Security-Policy') && !content.includes('contentSecurityPolicy')) {
           issues.push({
             file: 'next.config.js',
-            issue: 'Content Security Policy (CSP) eksik',
+            issue: i18n.t('modules.security.general.issues.cspMissing'),
             severity: 'medium',
-            recommendation: 'next.config.js dosyasında Content Security Policy ekleyin. Bu, XSS saldırılarına karşı koruma sağlar.'
+            recommendation: i18n.t('modules.security.general.recommendations.cspMissing')
           });
         }
         
@@ -419,9 +419,9 @@ module.exports = {
         if (content.includes('dangerouslyAllowSVG') || content.includes('dangerouslyAllowHTML')) {
           issues.push({
             file: 'next.config.js',
-            issue: 'Güvensiz yapılandırma: dangerouslyAllowSVG veya dangerouslyAllowHTML',
+            issue: i18n.t('modules.security.general.issues.unsafeConfig'),
             severity: 'medium',
-            recommendation: 'Bu yapılandırmalar XSS saldırılarına açık olabilir. Mümkünse kullanmaktan kaçının.'
+            recommendation: i18n.t('modules.security.general.recommendations.unsafeConfig')
           });
         }
       } catch (error) {
@@ -433,24 +433,24 @@ module.exports = {
       issues,
       recommendations: [
         {
-          title: 'Bağımlılık Güvenliği',
-          description: 'Bağımlılıklarınızı düzenli olarak güncelleyin ve güvenlik açıklarını kontrol edin. npm audit veya yarn audit komutlarını kullanabilirsiniz.'
+          title: i18n.t('modules.security.general.recommendations.dependencies.title'),
+          description: i18n.t('modules.security.general.recommendations.dependencies.description')
         },
         {
-          title: 'Çevresel Değişken Güvenliği',
-          description: '.env dosyalarını her zaman .gitignore\'a ekleyin ve hassas bilgileri güvenli bir şekilde yönetin.'
+          title: i18n.t('modules.security.general.recommendations.envSecurity.title'),
+          description: i18n.t('modules.security.general.recommendations.envSecurity.description')
         },
         {
-          title: 'Content Security Policy',
-          description: 'Content Security Policy (CSP), XSS saldırılarına karşı güçlü bir koruma sağlar. next.config.js dosyasında CSP başlıklarını yapılandırın.'
+          title: i18n.t('modules.security.general.recommendations.csp.title'),
+          description: i18n.t('modules.security.general.recommendations.csp.description')
         },
         {
-          title: 'Güvenli Yapılandırma',
-          description: 'dangerouslyAllowSVG, dangerouslyAllowHTML gibi güvensiz yapılandırmalardan kaçının.'
+          title: i18n.t('modules.security.general.recommendations.safeConfig.title'),
+          description: i18n.t('modules.security.general.recommendations.safeConfig.description')
         },
         {
-          title: 'Düzenli Güvenlik Denetimleri',
-          description: 'Uygulamanızı düzenli olarak güvenlik açıklarına karşı denetleyin ve güncel tutun.'
+          title: i18n.t('modules.security.general.recommendations.securityAudits.title'),
+          description: i18n.t('modules.security.general.recommendations.securityAudits.description')
         }
       ]
     };
@@ -466,71 +466,71 @@ module.exports = {
      * @returns {string} - Metin formatında görselleştirme
      */
     text(results) {
-      let output = '# Güvenlik Analizi\n\n';
+      let output = `# ${i18n.t('modules.security.visualize.title')}\n\n`;
       
       // Özet
-      output += '## Özet\n\n';
-      output += `Toplam ${results.metadata.totalIssues} güvenlik sorunu tespit edildi:\n`;
-      output += `- Kritik: ${results.metadata.criticalIssues}\n`;
-      output += `- Yüksek: ${results.metadata.highIssues}\n`;
-      output += `- Orta: ${results.metadata.mediumIssues}\n`;
-      output += `- Düşük: ${results.metadata.lowIssues}\n\n`;
+      output += `## ${i18n.t('modules.security.visualize.summary')}\n\n`;
+      output += `${i18n.t('modules.security.visualize.totalIssues', { count: results.metadata.totalIssues })}:\n`;
+      output += `- ${i18n.t('modules.security.visualize.criticalIssues')}: ${results.metadata.criticalIssues}\n`;
+      output += `- ${i18n.t('modules.security.visualize.highIssues')}: ${results.metadata.highIssues}\n`;
+      output += `- ${i18n.t('modules.security.visualize.mediumIssues')}: ${results.metadata.mediumIssues}\n`;
+      output += `- ${i18n.t('modules.security.visualize.lowIssues')}: ${results.metadata.lowIssues}\n\n`;
       
       // Server Component Güvenliği
-      output += '## Server Component Güvenliği\n\n';
+      output += `## ${i18n.t('modules.security.serverComponent.title')}\n\n`;
       
       if (results.results.serverComponentSecurity.issues.length === 0) {
-        output += 'Server component\'lerde güvenlik sorunu tespit edilmedi. Harika!\n\n';
+        output += `${i18n.t('modules.security.serverComponent.noIssues')}\n\n`;
       } else {
-        output += '### Tespit Edilen Sorunlar\n\n';
+        output += `### ${i18n.t('modules.security.visualize.detectedIssues')}\n\n`;
         results.results.serverComponentSecurity.issues.forEach(issue => {
           output += `- **${issue.file}** (${issue.severity.toUpperCase()})\n`;
-          output += `  - Sorun: ${issue.issue}\n`;
-          output += `  - Öneri: ${issue.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.security.visualize.issue')}: ${issue.issue}\n`;
+          output += `  - ${i18n.t('modules.security.visualize.recommendation')}: ${issue.recommendation}\n\n`;
         });
       }
       
-      output += '### Öneriler\n\n';
+      output += `### ${i18n.t('modules.security.visualize.recommendations')}\n\n`;
       results.results.serverComponentSecurity.recommendations.forEach(recommendation => {
         output += `- **${recommendation.title}**\n`;
         output += `  - ${recommendation.description}\n\n`;
       });
       
       // API Route Güvenliği
-      output += '## API Route Güvenliği\n\n';
+      output += `## ${i18n.t('modules.security.apiRoute.title')}\n\n`;
       
       if (results.results.apiRouteSecurity.issues.length === 0) {
-        output += 'API route\'larda güvenlik sorunu tespit edilmedi. Harika!\n\n';
+        output += `${i18n.t('modules.security.apiRoute.noIssues')}\n\n`;
       } else {
-        output += '### Tespit Edilen Sorunlar\n\n';
+        output += `### ${i18n.t('modules.security.visualize.detectedIssues')}\n\n`;
         results.results.apiRouteSecurity.issues.forEach(issue => {
           output += `- **${issue.file}** (${issue.severity.toUpperCase()})\n`;
-          output += `  - Sorun: ${issue.issue}\n`;
-          output += `  - Öneri: ${issue.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.security.visualize.issue')}: ${issue.issue}\n`;
+          output += `  - ${i18n.t('modules.security.visualize.recommendation')}: ${issue.recommendation}\n\n`;
         });
       }
       
-      output += '### Öneriler\n\n';
+      output += `### ${i18n.t('modules.security.visualize.recommendations')}\n\n`;
       results.results.apiRouteSecurity.recommendations.forEach(recommendation => {
         output += `- **${recommendation.title}**\n`;
         output += `  - ${recommendation.description}\n\n`;
       });
       
       // Genel Güvenlik
-      output += '## Genel Güvenlik\n\n';
+      output += `## ${i18n.t('modules.security.general.title')}\n\n`;
       
       if (results.results.generalSecurity.issues.length === 0) {
-        output += 'Genel güvenlik sorunu tespit edilmedi. Harika!\n\n';
+        output += `${i18n.t('modules.security.general.noIssues')}\n\n`;
       } else {
-        output += '### Tespit Edilen Sorunlar\n\n';
+        output += `### ${i18n.t('modules.security.visualize.detectedIssues')}\n\n`;
         results.results.generalSecurity.issues.forEach(issue => {
           output += `- **${issue.file}** (${issue.severity.toUpperCase()})\n`;
-          output += `  - Sorun: ${issue.issue}\n`;
-          output += `  - Öneri: ${issue.recommendation}\n\n`;
+          output += `  - ${i18n.t('modules.security.visualize.issue')}: ${issue.issue}\n`;
+          output += `  - ${i18n.t('modules.security.visualize.recommendation')}: ${issue.recommendation}\n\n`;
         });
       }
       
-      output += '### Öneriler\n\n';
+      output += `### ${i18n.t('modules.security.visualize.recommendations')}\n\n`;
       results.results.generalSecurity.recommendations.forEach(recommendation => {
         output += `- **${recommendation.title}**\n`;
         output += `  - ${recommendation.description}\n\n`;
@@ -547,35 +547,35 @@ module.exports = {
     html(results) {
       let html = `
 <div class="security-container">
-  <h2>Güvenlik Analizi</h2>
+  <h2>${i18n.t('modules.security.visualize.title')}</h2>
   
   <!-- Özet -->
   <div class="section">
-    <h3>Özet</h3>
+    <h3>${i18n.t('modules.security.visualize.summary')}</h3>
     <div class="summary">
-      <p>Toplam <strong>${results.metadata.totalIssues}</strong> güvenlik sorunu tespit edildi:</p>
+      <p>${i18n.t('modules.security.visualize.totalIssues', { count: results.metadata.totalIssues })}:</p>
       <ul class="summary-list">
-        <li class="severity-critical">Kritik: ${results.metadata.criticalIssues}</li>
-        <li class="severity-high">Yüksek: ${results.metadata.highIssues}</li>
-        <li class="severity-medium">Orta: ${results.metadata.mediumIssues}</li>
-        <li class="severity-low">Düşük: ${results.metadata.lowIssues}</li>
+        <li class="severity-critical">${i18n.t('modules.security.visualize.criticalIssues')}: ${results.metadata.criticalIssues}</li>
+        <li class="severity-high">${i18n.t('modules.security.visualize.highIssues')}: ${results.metadata.highIssues}</li>
+        <li class="severity-medium">${i18n.t('modules.security.visualize.mediumIssues')}: ${results.metadata.mediumIssues}</li>
+        <li class="severity-low">${i18n.t('modules.security.visualize.lowIssues')}: ${results.metadata.lowIssues}</li>
       </ul>
     </div>
   </div>
   
   <!-- Server Component Güvenliği -->
   <div class="section">
-    <h3>Server Component Güvenliği</h3>`;
+    <h3>${i18n.t('modules.security.serverComponent.title')}</h3>`;
       
       if (results.results.serverComponentSecurity.issues.length === 0) {
         html += `
     <div class="success-message">
-      <p>✅ Server component'lerde güvenlik sorunu tespit edilmedi. Harika!</p>
+      <p>✅ ${i18n.t('modules.security.serverComponent.noIssues')}</p>
     </div>`;
       } else {
         html += `
     <div class="subsection">
-      <h4>Tespit Edilen Sorunlar</h4>
+      <h4>${i18n.t('modules.security.visualize.detectedIssues')}</h4>
       <ul class="issue-list">`;
         
         results.results.serverComponentSecurity.issues.forEach(issue => {
@@ -597,7 +597,7 @@ module.exports = {
       
       html += `
     <div class="subsection">
-      <h4>Öneriler</h4>
+      <h4>${i18n.t('modules.security.visualize.recommendations')}</h4>
       <ul class="recommendation-list">`;
       
       results.results.serverComponentSecurity.recommendations.forEach(recommendation => {
@@ -615,17 +615,17 @@ module.exports = {
   
   <!-- API Route Güvenliği -->
   <div class="section">
-    <h3>API Route Güvenliği</h3>`;
+    <h3>${i18n.t('modules.security.apiRoute.title')}</h3>`;
       
       if (results.results.apiRouteSecurity.issues.length === 0) {
         html += `
     <div class="success-message">
-      <p>✅ API route'larda güvenlik sorunu tespit edilmedi. Harika!</p>
+      <p>✅ ${i18n.t('modules.security.apiRoute.noIssues')}</p>
     </div>`;
       } else {
         html += `
     <div class="subsection">
-      <h4>Tespit Edilen Sorunlar</h4>
+      <h4>${i18n.t('modules.security.visualize.detectedIssues')}</h4>
       <ul class="issue-list">`;
         
         results.results.apiRouteSecurity.issues.forEach(issue => {
@@ -647,7 +647,7 @@ module.exports = {
       
       html += `
     <div class="subsection">
-      <h4>Öneriler</h4>
+      <h4>${i18n.t('modules.security.visualize.recommendations')}</h4>
       <ul class="recommendation-list">`;
       
       results.results.apiRouteSecurity.recommendations.forEach(recommendation => {
@@ -665,17 +665,17 @@ module.exports = {
   
   <!-- Genel Güvenlik -->
   <div class="section">
-    <h3>Genel Güvenlik</h3>`;
+    <h3>${i18n.t('modules.security.general.title')}</h3>`;
       
       if (results.results.generalSecurity.issues.length === 0) {
         html += `
     <div class="success-message">
-      <p>✅ Genel güvenlik sorunu tespit edilmedi. Harika!</p>
+      <p>✅ ${i18n.t('modules.security.general.noIssues')}</p>
     </div>`;
       } else {
         html += `
     <div class="subsection">
-      <h4>Tespit Edilen Sorunlar</h4>
+      <h4>${i18n.t('modules.security.visualize.detectedIssues')}</h4>
       <ul class="issue-list">`;
         
         results.results.generalSecurity.issues.forEach(issue => {
@@ -697,7 +697,7 @@ module.exports = {
       
       html += `
     <div class="subsection">
-      <h4>Öneriler</h4>
+      <h4>${i18n.t('modules.security.visualize.recommendations')}</h4>
       <ul class="recommendation-list">`;
       
       results.results.generalSecurity.recommendations.forEach(recommendation => {
