@@ -1,35 +1,35 @@
-# Katkıda Bulunma Rehberi
+# Contributing Guide
 
-Next.js Analyzer projesine katkıda bulunmak istediğiniz için teşekkür ederiz! Bu rehber, projeye nasıl katkıda bulunabileceğinizi açıklar.
+Thank you for your interest in contributing to the Next.js Analyzer project! This guide explains how you can contribute to the project.
 
-## Geliştirme Ortamı Kurulumu
+## Development Environment Setup
 
-1. Projeyi fork edin ve klonlayın:
+1. Fork and clone the project:
 
 ```bash
-git clone https://github.com/[kullanıcı-adınız]/next-js-analyzer.git
-cd next-js-analyzer
+git clone https://github.com/[your-username]/nextjs-analyzer.git
+cd nextjs-analyzer
 ```
 
-2. Bağımlılıkları yükleyin:
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Projeyi yerel olarak çalıştırın:
+3. Run the project locally:
 
 ```bash
 npm start
 ```
 
-## Modüler Yapı
+## Modular Structure
 
-Next.js Analyzer, modüler bir yapıya sahiptir. Her analiz modülü, `src/modules` dizini altında kendi klasöründe bulunur. Yeni bir modül eklemek için bu yapıyı takip edin.
+Next.js Analyzer has a modular structure. Each analysis module is located in its own directory under the `src/modules` directory. Follow this structure when adding a new module.
 
-### Modül Yapısı
+### Module Structure
 
-Bir modül, aşağıdaki yapıya sahip olmalıdır:
+A module should have the following structure:
 
 ```javascript
 module.exports = {
@@ -37,47 +37,47 @@ module.exports = {
   description: 'Module description',
   
   async analyze(analyzer, options) {
-    // Analiz işlemi
+    // Analysis process
     return {
       results: {
-        // Analiz sonuçları
+        // Analysis results
       },
       metadata: {
-        // Analiz meta verileri
+        // Analysis metadata
       }
     };
   },
   
   visualize: {
     text(results) {
-      // Metin formatında görselleştirme
+      // Text format visualization
       return 'Text visualization';
     },
     
     html(results) {
-      // HTML formatında görselleştirme
+      // HTML format visualization
       return '<div>HTML visualization</div>';
     },
     
     json(results) {
-      // JSON formatında görselleştirme
+      // JSON format visualization
       return JSON.stringify(results, null, 2);
     }
   }
 };
 ```
 
-## Yeni Bir Modül Ekleme
+## Adding a New Module
 
-1. `src/modules` dizini altında yeni bir klasör oluşturun:
+1. Create a new folder under the `src/modules` directory:
 
 ```bash
 mkdir src/modules/your-module-name
 ```
 
-2. `src/modules/your-module-name/index.js` dosyasını oluşturun ve modül yapısını takip edin.
+2. Create the `src/modules/your-module-name/index.js` file and follow the module structure.
 
-3. Modülünüzü `src/modules/index.js` dosyasına ekleyin:
+3. Add your module to the `src/modules/index.js` file:
 
 ```javascript
 const component = require('./component');
@@ -105,108 +105,108 @@ module.exports = {
 };
 ```
 
-4. Modülünüzü test edin:
+4. Test your module:
 
 ```bash
 npm start analyze --module your-module-name
 ```
 
-## Kod Stili
+## Code Style
 
-Projeye katkıda bulunurken aşağıdaki kod stiline uyun:
+Follow these code style guidelines when contributing to the project:
 
-- 2 boşluk girinti kullanın
-- Noktalı virgül kullanın
-- Tek tırnak kullanın
-- camelCase değişken ve fonksiyon isimleri kullanın
-- JSDoc ile fonksiyonları belgelendirin
+- Use 2 spaces for indentation
+- Use semicolons
+- Use single quotes
+- Use camelCase for variable and function names
+- Document functions with JSDoc
 
-## Commit Mesajları
+## Commit Messages
 
-Commit mesajlarınızı aşağıdaki formatta yazın:
-
-```
-[modül-adı]: Kısa açıklama
-
-Uzun açıklama (gerekirse)
-```
-
-Örnek:
+Write your commit messages in the following format:
 
 ```
-[security]: API route güvenlik kontrolü eklendi
+[module-name]: Short description
 
-- CORS yapılandırması kontrolü eklendi
-- Rate limiting kontrolü eklendi
-- Authentication kontrolü eklendi
+Long description (if needed)
 ```
 
-## Pull Request Süreci
+Example:
 
-1. Yeni bir branch oluşturun:
+```
+[security]: Added API route security check
+
+- Added CORS configuration check
+- Added rate limiting check
+- Added authentication check
+```
+
+## Pull Request Process
+
+1. Create a new branch:
 
 ```bash
 git checkout -b feature/your-feature-name
 ```
 
-2. Değişikliklerinizi commit edin:
+2. Commit your changes:
 
 ```bash
 git commit -m "[module-name]: Short description"
 ```
 
-3. Branch'inizi push edin:
+3. Push your branch:
 
 ```bash
 git push origin feature/your-feature-name
 ```
 
-4. GitHub üzerinden bir Pull Request oluşturun.
+4. Create a Pull Request on GitHub.
 
-5. Pull Request'iniz incelenecek ve gerekirse değişiklikler istenecektir.
+5. Your Pull Request will be reviewed, and changes may be requested.
 
-6. Pull Request'iniz onaylandıktan sonra, değişiklikleriniz ana branch'e merge edilecektir.
+6. After your Pull Request is approved, your changes will be merged into the main branch.
 
-## Sorunlar ve Özellik İstekleri
+## Issues and Feature Requests
 
-Sorunları ve özellik isteklerini GitHub Issues üzerinden bildirebilirsiniz. Lütfen aşağıdaki şablonu kullanın:
+You can report issues and feature requests through GitHub Issues. Please use the following templates:
 
-### Sorun Bildirimi
-
-```
-## Sorun Açıklaması
-[Sorunu kısaca açıklayın]
-
-## Yeniden Üretme Adımları
-1. [Adım 1]
-2. [Adım 2]
-3. [Adım 3]
-
-## Beklenen Davranış
-[Beklenen davranışı açıklayın]
-
-## Gerçek Davranış
-[Gerçek davranışı açıklayın]
-
-## Ortam
-- İşletim Sistemi: [İşletim sistemi]
-- Node.js Sürümü: [Node.js sürümü]
-- Next.js Analyzer Sürümü: [Next.js Analyzer sürümü]
-```
-
-### Özellik İsteği
+### Issue Report
 
 ```
-## Özellik Açıklaması
-[Özelliği kısaca açıklayın]
+## Issue Description
+[Briefly describe the issue]
 
-## Kullanım Senaryosu
-[Bu özelliğin nasıl kullanılacağını açıklayın]
+## Steps to Reproduce
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
 
-## Alternatif Çözümler
-[Varsa, alternatif çözümleri açıklayın]
+## Expected Behavior
+[Describe the expected behavior]
+
+## Actual Behavior
+[Describe the actual behavior]
+
+## Environment
+- Operating System: [Operating system]
+- Node.js Version: [Node.js version]
+- Next.js Analyzer Version: [Next.js Analyzer version]
 ```
 
-## Lisans
+### Feature Request
 
-Projeye katkıda bulunarak, katkılarınızın MIT lisansı altında lisanslanacağını kabul etmiş olursunuz.
+```
+## Feature Description
+[Briefly describe the feature]
+
+## Use Case
+[Explain how this feature would be used]
+
+## Alternative Solutions
+[Describe alternative solutions, if any]
+```
+
+## License
+
+By contributing to the project, you agree that your contributions will be licensed under the MIT license.

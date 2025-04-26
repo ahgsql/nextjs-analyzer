@@ -1,209 +1,226 @@
 # Next.js Analyzer
 
-Next.js projelerini kapsamlı olarak analiz eden modüler bir araç. Komponent, performans, güvenlik, SEO, veri çekme, kod kalitesi ve tarihsel analiz özellikleri içerir.
+A modular tool that comprehensively analyzes Next.js projects. Includes component, performance, security, SEO, data fetching, code quality, and historical analysis features.
 
 ![Next.js Analyzer](https://via.placeholder.com/800x400?text=Next.js+Analyzer)
 
-## Özellikler
+## Features
 
-- **Komponent Analizi**: Server ve client komponentlerin tespiti ve analizi
-- **Performans Analizi**: Bundle size ve image optimizasyon kontrolü
-- **Güvenlik Analizi**: Server komponentlerde ve API route'larda güvenlik kontrolü
-- **SEO Analizi**: Meta tag ve semantik HTML kontrolü
-- **Veri Fetching Analizi**: getServerSideProps, getStaticProps ve client-side veri çekme yöntemlerinin analizi
-- **Kod Kalitesi Analizi**: Kullanılmayan komponentlerin tespiti
-- **Route Analizi**: Statik ve dinamik route'ların tespiti ve haritası
-- **Tarihsel Analiz**: Versiyon karşılaştırması ve trend analizi
-- **Gelişmiş Görselleştirme**: İnteraktif grafikler ve filtreleme özellikleri
+- **Component Analysis**: Detection and analysis of server and client components
+- **Performance Analysis**: Bundle size and image optimization checks
+- **Security Analysis**: Security checks in server components and API routes
+- **SEO Analysis**: Meta tag and semantic HTML checks
+- **Data Fetching Analysis**: Analysis of getServerSideProps, getStaticProps, and client-side data fetching methods
+- **Code Quality Analysis**: Detection of unused components
+- **Route Analysis**: Detection and mapping of static and dynamic routes
+- **Historical Analysis**: Version comparison and trend analysis
+- **Advanced Visualization**: Interactive graphs and filtering features
 
-## Kurulum
-
-```bash
-npm install -g next-js-analyzer
-```
-
-veya
+## Installation
 
 ```bash
-yarn global add next-js-analyzer
+npm install -g nextjs-analyzer
 ```
 
-## Kullanım
-
-### Temel Kullanım
+or
 
 ```bash
-# Proje dizininde çalıştırın
-next-js-analyzer analyze
+yarn global add nextjs-analyzer
 ```
 
-### Belirli Bir Modül İle Analiz
+## Usage
+
+### Basic Usage
 
 ```bash
-# Sadece komponent analizi
-next-js-analyzer analyze --module component
+# Run in the project directory
+nextjs-analyzer analyze
 
-# Sadece performans analizi
-next-js-analyzer analyze --module performance
-
-# Sadece güvenlik analizi
-next-js-analyzer analyze --module security
-
-# Sadece SEO analizi
-next-js-analyzer analyze --module seo
-
-# Sadece veri fetching analizi
-next-js-analyzer analyze --module data-fetching
-
-# Sadece kod kalitesi analizi
-next-js-analyzer analyze --module code-quality
-
-# Sadece route analizi
-next-js-analyzer analyze --module routing
-
-# Sadece tarihsel analiz
-next-js-analyzer analyze --module history
-
-# Gelişmiş görselleştirme
-next-js-analyzer analyze --module visualization
+# Analyze a specific Next.js project
+nextjs-analyzer analyze --path /path/to/your/nextjs/project
 ```
 
-### Kısayol Komutları
+### Analysis with a Specific Module
 
 ```bash
-# Komponent analizi
-next-js-analyzer analyze:component
+# Component analysis only
+nextjs-analyzer analyze --module component --path /path/to/your/nextjs/project
 
-# Performans analizi
-next-js-analyzer analyze:performance
+# Performance analysis only
+nextjs-analyzer analyze --module performance --path /path/to/your/nextjs/project
 
-# Güvenlik analizi
-next-js-analyzer analyze:security
+# Security analysis only
+nextjs-analyzer analyze --module security --path /path/to/your/nextjs/project
 
-# SEO analizi
-next-js-analyzer analyze:seo
+# SEO analysis only
+nextjs-analyzer analyze --module seo --path /path/to/your/nextjs/project
 
-# Veri fetching analizi
-next-js-analyzer analyze:data-fetching
+# Data fetching analysis only
+nextjs-analyzer analyze --module data-fetching --path /path/to/your/nextjs/project
 
-# Kod kalitesi analizi
-next-js-analyzer analyze:code-quality
+# Code quality analysis only
+nextjs-analyzer analyze --module code-quality --path /path/to/your/nextjs/project
 
-# Route analizi
-next-js-analyzer analyze:routing
+# Route analysis only
+nextjs-analyzer analyze --module routing --path /path/to/your/nextjs/project
 
-# Tarihsel analiz
-next-js-analyzer analyze:history
+# Historical analysis only
+nextjs-analyzer analyze --module history --path /path/to/your/nextjs/project
 
-# Görselleştirme
-next-js-analyzer visualize
+# Advanced visualization
+nextjs-analyzer analyze --module visualization --path /path/to/your/nextjs/project
 ```
 
-### Mevcut Modülleri Listeleme
+### Shortcut Commands
 
 ```bash
-next-js-analyzer list-modules
+# Component analysis
+nextjs-analyzer analyze:component --path /path/to/your/nextjs/project
+
+# Performance analysis
+nextjs-analyzer analyze:performance --path /path/to/your/nextjs/project
+
+# Security analysis
+nextjs-analyzer analyze:security --path /path/to/your/nextjs/project
+
+# SEO analysis
+nextjs-analyzer analyze:seo --path /path/to/your/nextjs/project
+
+# Data fetching analysis
+nextjs-analyzer analyze:data-fetching --path /path/to/your/nextjs/project
+
+# Code quality analysis
+nextjs-analyzer analyze:code-quality --path /path/to/your/nextjs/project
+
+# Route analysis
+nextjs-analyzer analyze:routing --path /path/to/your/nextjs/project
+
+# Historical analysis
+nextjs-analyzer analyze:history --path /path/to/your/nextjs/project
+
+# Visualization
+nextjs-analyzer visualize --path /path/to/your/nextjs/project
 ```
 
-## Çıktı Formatları
-
-Next.js Analyzer, analiz sonuçlarını üç farklı formatta sunar:
-
-- **Metin**: Terminal üzerinde okunabilir metin formatında
-- **HTML**: İnteraktif grafikler ve filtreleme özellikleri içeren HTML formatında
-- **JSON**: Programatik kullanım için JSON formatında
+### Listing Available Modules
 
 ```bash
-# HTML formatında çıktı
-next-js-analyzer analyze --format html
-
-# JSON formatında çıktı
-next-js-analyzer analyze --format json
-
-# Metin formatında çıktı (varsayılan)
-next-js-analyzer analyze --format text
+nextjs-analyzer list-modules
 ```
 
-## Modül Detayları
+## Language Settings
 
-### Komponent Analizi
-
-Server ve client komponentlerin tespiti ve analizi. Next.js 13+ App Router ve Pages Router desteklenir.
+Next.js Analyzer supports multiple languages. You can change the language using the `settings` command:
 
 ```bash
-next-js-analyzer analyze:component
+# Change language settings
+nextjs-analyzer settings
 ```
 
-### Performans Analizi
+This will open an interactive menu where you can select your preferred language. Currently supported languages:
 
-Bundle size ve image optimizasyon kontrolü. Büyük komponentleri ve optimize edilmemiş görselleri tespit eder.
+- English (default)
+- Turkish (Türkçe)
+
+## Output Formats
+
+Next.js Analyzer presents analysis results in three different formats:
+
+- **Text**: In readable text format on the terminal
+- **HTML**: In HTML format with interactive graphs and filtering features
+- **JSON**: In JSON format for programmatic use
 
 ```bash
-next-js-analyzer analyze:performance
+# Output in HTML format
+nextjs-analyzer analyze --path /path/to/your/nextjs/project --format html
+
+# Output in JSON format
+nextjs-analyzer analyze --path /path/to/your/nextjs/project --format json
+
+# Output in text format (default)
+nextjs-analyzer analyze --path /path/to/your/nextjs/project --format text
 ```
 
-### Güvenlik Analizi
+## Module Details
 
-Server komponentlerde ve API route'larda güvenlik kontrolü. Olası güvenlik açıklarını tespit eder.
+### Component Analysis
+
+Detection and analysis of server and client components. Supports Next.js 13+ App Router and Pages Router.
 
 ```bash
-next-js-analyzer analyze:security
+nextjs-analyzer analyze:component --path /path/to/your/nextjs/project
 ```
 
-### SEO Analizi
+### Performance Analysis
 
-Meta tag ve semantik HTML kontrolü. SEO için önemli eksiklikleri tespit eder.
+Bundle size and image optimization checks. Detects large components and unoptimized images.
 
 ```bash
-next-js-analyzer analyze:seo
+nextjs-analyzer analyze:performance --path /path/to/your/nextjs/project
 ```
 
-### Veri Fetching Analizi
+### Security Analysis
 
-getServerSideProps, getStaticProps ve client-side veri çekme yöntemlerinin analizi. Cache stratejisi önerileri sunar.
+Security checks in server components and API routes. Detects potential security vulnerabilities.
 
 ```bash
-next-js-analyzer analyze:data-fetching
+nextjs-analyzer analyze:security --path /path/to/your/nextjs/project
 ```
 
-### Kod Kalitesi Analizi
+### SEO Analysis
 
-Kullanılmayan komponentlerin tespiti. Kod kalitesini artırmak için öneriler sunar.
+Meta tag and semantic HTML checks. Detects important deficiencies for SEO.
 
 ```bash
-next-js-analyzer analyze:code-quality
+nextjs-analyzer analyze:seo --path /path/to/your/nextjs/project
 ```
 
-### Route Analizi
+### Data Fetching Analysis
 
-Statik ve dinamik route'ların tespiti ve haritası. Route yapısını görselleştirir.
+Analysis of getServerSideProps, getStaticProps, and client-side data fetching methods. Provides cache strategy recommendations.
 
 ```bash
-next-js-analyzer analyze:routing
+nextjs-analyzer analyze:data-fetching --path /path/to/your/nextjs/project
 ```
 
-### Tarihsel Analiz
+### Code Quality Analysis
 
-Versiyon karşılaştırması ve trend analizi. Projenin zaman içindeki değişimini analiz eder.
+Detection of unused components. Provides recommendations to improve code quality.
 
 ```bash
-next-js-analyzer analyze:history
+nextjs-analyzer analyze:code-quality --path /path/to/your/nextjs/project
 ```
 
-### Gelişmiş Görselleştirme
+### Route Analysis
 
-İnteraktif grafikler ve filtreleme özellikleri. Analiz sonuçlarını görselleştirir.
+Detection and mapping of static and dynamic routes. Visualizes the route structure.
 
 ```bash
-next-js-analyzer visualize
+nextjs-analyzer analyze:routing --path /path/to/your/nextjs/project
 ```
 
-## Programatik Kullanım
+### Historical Analysis
 
-Next.js Analyzer'ı kendi projenizde programatik olarak kullanabilirsiniz:
+Version comparison and trend analysis. Analyzes the project's changes over time.
+
+```bash
+nextjs-analyzer analyze:history --path /path/to/your/nextjs/project
+```
+
+### Advanced Visualization
+
+Interactive graphs and filtering features. Visualizes analysis results.
+
+```bash
+nextjs-analyzer visualize --path /path/to/your/nextjs/project
+```
+
+## Programmatic Usage
+
+You can use Next.js Analyzer programmatically in your own project:
 
 ```javascript
-const { NextJsAnalyzer } = require('next-js-analyzer');
+const { NextJsAnalyzer } = require('nextjs-analyzer');
 
 async function analyzeProject() {
   const analyzer = new NextJsAnalyzer({
@@ -218,10 +235,10 @@ async function analyzeProject() {
 analyzeProject();
 ```
 
-## Katkıda Bulunma
+## Contributing
 
-Katkıda bulunmak için lütfen GitHub üzerinden bir issue açın veya pull request gönderin.
+To contribute, please open an issue or submit a pull request on GitHub.
 
-## Lisans
+## License
 
 MIT

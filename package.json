@@ -1,7 +1,7 @@
 {
   "name": "nextjs-analyzer",
-  "version": "2.1.0",
-  "description": "Next.js projelerini kapsamlı olarak analiz eden modüler araç. Komponent, performans, güvenlik, SEO, veri çekme, kod kalitesi ve tarihsel analiz özellikleri içerir.",
+  "version": "2.2.2",
+  "description": "A modular tool that comprehensively analyzes Next.js projects. Includes component, performance, security, SEO, data fetching, code quality, and historical analysis features.",
   "main": "src/index.js",
   "bin": {
     "nextjs-analyzer": "./bin/nextjs-analyzer.js"
@@ -40,7 +40,7 @@
     "next14",
     "react"
   ],
-  "author": "Sağlam Spor",
+  "author": "ahgsql",
   "license": "MIT",
   "dependencies": {
     "chalk": "^4.1.2",
@@ -57,10 +57,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/saglamspor/nextjs-analyzer"
+    "url": "https://github.com/ahgsql/nextjs-analyzer"
   },
   "bugs": {
-    "url": "https://github.com/saglamspor/nextjs-analyzer/issues"
+    "url": "https://github.com/ahgsql/nextjs-analyzer/issues"
   },
-  "homepage": "https://github.com/saglamspor/nextjs-analyzer#readme"
+  "homepage": "https://github.com/ahgsql/nextjs-analyzer#readme"
 }

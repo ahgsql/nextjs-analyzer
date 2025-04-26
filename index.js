@@ -8,7 +8,7 @@ const NextJsAnalyzer = require('./analyzer');
 
 // Komut satırı argümanlarını tanımla
 program
-  .name('next-js-analyzer')
+  .name('nextjs-analyzer')
   .description('Next.js projelerinde server ve client componentleri analiz eden araç')
   .version('1.0.0')
   .option('-p, --path <path>', 'Analiz edilecek Next.js projesinin yolu', process.cwd())
